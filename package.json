@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://yourusername.github.io/spotify-analytics-dashboard/",
+  "homepage": "https://TyoshiChikayama-Jackson.github.io/Spotify-Analytics-Project/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
