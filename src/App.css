@@ -1,0 +1,35 @@
+.container {
+  max-width: 480px;
+  margin: 4rem auto;
+  text-align: center;
+  font-family: system-ui, sans-serif;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.profile img {
+  border-radius: 50%;
+}
+
+button {
+  background-color: #1db954;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1ed760;
+}
+
+.error {
+  color: #e22134;
+}
