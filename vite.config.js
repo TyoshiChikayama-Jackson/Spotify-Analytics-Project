@@ -5,4 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/spotify-analytics-dashboard/',
+  server: {
+    host: '127.0.0.1',
+    port: 5199,
+    strictPort: true, // fail instead of silently picking a new port
+  },
 })
