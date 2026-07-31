@@ -1,4 +1,4 @@
-import { SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI, SPOTIFY_SCOPES } from '../config.js'
+import { SPOTIFY_CLIENT_ID, SPOTIFY_SCOPES } from '../config.js'
 
 const AUTHORIZE_URL = 'https://accounts.spotify.com/authorize'
 const TOKEN_URL = 'https://accounts.spotify.com/api/token'
@@ -7,6 +7,14 @@ const CODE_VERIFIER_KEY = 'spotify_code_verifier'
 const ACCESS_TOKEN_KEY = 'spotify_access_token'
 const REFRESH_TOKEN_KEY = 'spotify_refresh_token'
 const EXPIRES_AT_KEY = 'spotify_expires_at'
+
+// Derived at runtime so the same build works against 127.0.0.1:<port> in dev
+// and the deployed GitHub Pages origin without editing config per environment.
+// import.meta.env.BASE_URL always has a leading and trailing slash (matches
+// vite.config.js's `base`), so this always yields a trailing-slash URL.
+function getRedirectUri() {
+  return `${window.location.origin}${import.meta.env.BASE_URL}`
+}
 
 function generateCodeVerifier(length = 128) {
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'
@@ -36,7 +44,7 @@ export async function redirectToSpotifyAuthorize() {
     response_type: 'code',
     client_id: SPOTIFY_CLIENT_ID,
     scope: SPOTIFY_SCOPES,
-    redirect_uri: SPOTIFY_REDIRECT_URI,
+    redirect_uri: getRedirectUri(),
     code_challenge_method: 'S256',
     code_challenge: codeChallenge,
   })
@@ -59,7 +67,7 @@ async function exchangeCodeForTokens(code) {
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
     code,
-    redirect_uri: SPOTIFY_REDIRECT_URI,
+    redirect_uri: getRedirectUri(),
     client_id: SPOTIFY_CLIENT_ID,
     code_verifier: codeVerifier,
   })
