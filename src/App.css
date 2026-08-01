@@ -375,3 +375,110 @@ p.small {
   font-weight: 700;
   font-variant-numeric: proportional-nums;
 }
+
+/* History import */
+
+.privacy-note {
+  background: var(--gridline);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.import-controls {
+  margin: 1rem 0;
+}
+
+.import-controls input[type='file'] {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.import-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  background: var(--page-plane);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
+
+.import-summary p {
+  margin: 0;
+}
+
+/* Highlight stat grid */
+
+.highlight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.highlight-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: var(--page-plane);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+}
+
+/* Heatmap */
+
+.heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow-x: auto;
+}
+
+.heatmap-hour-axis {
+  display: grid;
+  grid-template-columns: 2.5rem repeat(24, minmax(14px, 1fr));
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.heatmap-row {
+  display: grid;
+  grid-template-columns: 2.5rem repeat(24, minmax(14px, 1fr));
+  gap: 3px;
+  align-items: center;
+}
+
+.heatmap-day-label {
+  text-align: right;
+  padding-right: 0.5rem;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  min-width: 14px;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.heatmap-legend-swatches {
+  display: flex;
+  gap: 2px;
+}
+
+.heatmap-legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}

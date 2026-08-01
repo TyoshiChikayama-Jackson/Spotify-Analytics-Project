@@ -11,6 +11,7 @@ import RecentlyPlayed from './components/RecentlyPlayed.jsx'
 import TopTracks from './components/TopTracks.jsx'
 import TopArtists from './components/TopArtists.jsx'
 import Library from './components/Library.jsx'
+import FullHistory from './components/history/FullHistory.jsx'
 import './App.css'
 
 const TABS = [
@@ -19,6 +20,7 @@ const TABS = [
   { id: 'top-tracks', label: 'Top Tracks', Component: TopTracks },
   { id: 'top-artists', label: 'Top Artists', Component: TopArtists },
   { id: 'library', label: 'Library', Component: Library },
+  { id: 'full-history', label: 'Full History', Component: FullHistory },
 ]
 
 function App() {
