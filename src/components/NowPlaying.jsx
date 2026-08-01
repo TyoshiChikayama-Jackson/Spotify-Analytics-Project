@@ -19,7 +19,7 @@ export default function NowPlaying() {
         <RefreshButton onClick={refresh} disabled={refreshing} />
       </div>
 
-      {loading && <SectionLoading />}
+      {loading && <SectionLoading count={1} />}
       {!loading && error && <SectionError message={error} onRetry={refresh} />}
 
       {!loading && !error && !data && (

@@ -1,5 +1,14 @@
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { totalHoursByYear } from '../../utils/historyStats.js'
+import {
+  axisTick,
+  axisLine,
+  gridStroke,
+  tooltipCursor,
+  tooltipContentStyle,
+  tooltipLabelStyle,
+  chartAnimation,
+} from '../chartTheme.js'
 
 export default function HoursByYearChart({ entries }) {
   const data = totalHoursByYear(entries)
@@ -10,31 +19,22 @@ export default function HoursByYearChart({ entries }) {
       <h3 className="chart-title">Listening hours by year</h3>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
-          <CartesianGrid vertical={false} stroke="var(--gridline)" />
-          <XAxis
-            dataKey="year"
-            tick={{ fill: 'var(--muted)', fontSize: 11 }}
-            axisLine={{ stroke: 'var(--baseline)' }}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fill: 'var(--muted)', fontSize: 11 }}
-            axisLine={false}
-            tickLine={false}
-            width={36}
-          />
+          <CartesianGrid vertical={false} stroke={gridStroke} />
+          <XAxis dataKey="year" tick={axisTick} axisLine={axisLine} tickLine={false} />
+          <YAxis tick={axisTick} axisLine={false} tickLine={false} width={36} />
           <Tooltip
-            cursor={{ fill: 'var(--gridline)' }}
-            contentStyle={{
-              background: 'var(--surface-1)',
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              fontSize: 12,
-            }}
-            labelStyle={{ color: 'var(--text-primary)' }}
+            cursor={tooltipCursor}
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
             formatter={(value) => [`${Math.round(value).toLocaleString()} hrs`, '']}
           />
-          <Bar dataKey="hours" fill="var(--series-1)" radius={[4, 4, 0, 0]} maxBarSize={48} />
+          <Bar
+            dataKey="hours"
+            fill="var(--accent)"
+            radius={[2, 2, 0, 0]}
+            maxBarSize={48}
+            {...chartAnimation}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

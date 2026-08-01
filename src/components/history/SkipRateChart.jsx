@@ -1,5 +1,13 @@
 import { Line, LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { hasSkipData, skipRateByMonth } from '../../utils/historyStats.js'
+import {
+  axisTick,
+  axisLine,
+  gridStroke,
+  tooltipContentStyle,
+  tooltipLabelStyle,
+  chartAnimation,
+} from '../chartTheme.js'
 
 function formatMonthLabel(month) {
   const [year, monthNum] = month.split('-')
@@ -23,29 +31,18 @@ export default function SkipRateChart({ entries }) {
       <h3 className="chart-title">Skip rate over time</h3>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
-          <CartesianGrid vertical={false} stroke="var(--gridline)" />
+          <CartesianGrid vertical={false} stroke={gridStroke} />
           <XAxis
             dataKey="label"
-            tick={{ fill: 'var(--muted)', fontSize: 11 }}
-            axisLine={{ stroke: 'var(--baseline)' }}
+            tick={axisTick}
+            axisLine={axisLine}
             tickLine={false}
             interval={tickInterval}
           />
-          <YAxis
-            tick={{ fill: 'var(--muted)', fontSize: 11 }}
-            axisLine={false}
-            tickLine={false}
-            width={36}
-            unit="%"
-          />
+          <YAxis tick={axisTick} axisLine={false} tickLine={false} width={36} unit="%" />
           <Tooltip
-            contentStyle={{
-              background: 'var(--surface-1)',
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              fontSize: 12,
-            }}
-            labelStyle={{ color: 'var(--text-primary)' }}
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
             formatter={(value) => [`${value.toFixed(1)}%`, 'Skip rate']}
           />
           <Line
@@ -54,6 +51,7 @@ export default function SkipRateChart({ entries }) {
             stroke="var(--series-1)"
             strokeWidth={2}
             dot={false}
+            {...chartAnimation}
           />
         </LineChart>
       </ResponsiveContainer>

@@ -1,21 +1,21 @@
 import { dayHourHeatmap } from '../../utils/historyStats.js'
 
-// Sequential blue ramp, light -> dark (matches the series-1 hue used
-// elsewhere). Steps taken from the validated palette's 100->700 range.
+// Sequential amber ramp, dark -> light on the graphite surface (matches the
+// --accent hue used for interactive UI elsewhere in this system).
 const SEQUENTIAL_STEPS = [
-  '#cde2fb',
-  '#b7d3f6',
-  '#9ec5f4',
-  '#86b6ef',
-  '#6da7ec',
-  '#5598e7',
-  '#3987e5',
-  '#2a78d6',
-  '#256abf',
-  '#1c5cab',
-  '#184f95',
-  '#104281',
-  '#0d366b',
+  '#2a2011',
+  '#3a2c14',
+  '#4d3a17',
+  '#634a19',
+  '#7c5b1a',
+  '#976c1c',
+  '#b47f1e',
+  '#d2941f',
+  '#f0a83c',
+  '#f4bb63',
+  '#f7cd8b',
+  '#fadfb3',
+  '#fdf1db',
 ]
 
 const HOUR_TICKS = [0, 6, 12, 18]
@@ -51,7 +51,7 @@ export default function ListeningHeatmap({ entries }) {
             </span>
           ))}
         </div>
-        {rows.map((row) => (
+        {rows.map((row, rowIndex) => (
           <div className="heatmap-row" role="row" key={row.day}>
             <span className="heatmap-day-label muted small" role="rowheader">
               {row.day}
@@ -61,7 +61,10 @@ export default function ListeningHeatmap({ entries }) {
                 key={hour}
                 role="cell"
                 className="heatmap-cell"
-                style={{ background: colorFor(count, max) }}
+                style={{
+                  background: colorFor(count, max),
+                  '--i': rowIndex * 24 + hour,
+                }}
                 title={`${row.day} ${hourLabel(hour)}: ${count} play${count === 1 ? '' : 's'}`}
               />
             ))}

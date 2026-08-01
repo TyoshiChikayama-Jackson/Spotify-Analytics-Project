@@ -1,5 +1,10 @@
-export function SectionLoading() {
-  return <p className="section-state muted">Loading…</p>
+import { SkeletonRows, SkeletonChart } from './Skeleton.jsx'
+
+export function SectionLoading({ variant = 'rows', count }) {
+  if (variant === 'chart') {
+    return <SkeletonChart />
+  }
+  return <SkeletonRows count={count} />
 }
 
 export function SectionError({ message, onRetry }) {

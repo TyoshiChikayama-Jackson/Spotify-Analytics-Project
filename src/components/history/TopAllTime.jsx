@@ -30,7 +30,11 @@ export default function TopAllTime({ entries }) {
       ) : (
         <ol className="ranked-list">
           {items.map((item, index) => (
-            <li key={`${item.name}-${item.artistName ?? ''}`} className="ranked-item">
+            <li
+              key={`${item.name}-${item.artistName ?? ''}`}
+              className="ranked-item"
+              style={{ '--i': index }}
+            >
               <span className="rank">{index + 1}</span>
               <div className="ranked-item-info">
                 <p className="track-name">{item.name}</p>

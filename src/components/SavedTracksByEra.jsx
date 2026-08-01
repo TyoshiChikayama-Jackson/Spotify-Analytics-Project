@@ -1,4 +1,13 @@
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import {
+  axisTick,
+  axisLine,
+  gridStroke,
+  tooltipCursor,
+  tooltipContentStyle,
+  tooltipLabelStyle,
+  chartAnimation,
+} from './chartTheme.js'
 
 function decadeLabel(releaseDate) {
   const year = Number.parseInt(releaseDate?.slice(0, 4), 10)
@@ -29,32 +38,22 @@ export default function SavedTracksByEra({ items }) {
       <h3 className="chart-title">Saved tracks by decade</h3>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
-          <CartesianGrid vertical={false} stroke="var(--gridline)" />
-          <XAxis
-            dataKey="decade"
-            tick={{ fill: 'var(--muted)', fontSize: 11 }}
-            axisLine={{ stroke: 'var(--baseline)' }}
-            tickLine={false}
-          />
-          <YAxis
-            allowDecimals={false}
-            tick={{ fill: 'var(--muted)', fontSize: 11 }}
-            axisLine={false}
-            tickLine={false}
-            width={28}
-          />
+          <CartesianGrid vertical={false} stroke={gridStroke} />
+          <XAxis dataKey="decade" tick={axisTick} axisLine={axisLine} tickLine={false} />
+          <YAxis allowDecimals={false} tick={axisTick} axisLine={false} tickLine={false} width={28} />
           <Tooltip
-            cursor={{ fill: 'var(--gridline)' }}
-            contentStyle={{
-              background: 'var(--surface-1)',
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              fontSize: 12,
-            }}
-            labelStyle={{ color: 'var(--text-primary)' }}
+            cursor={tooltipCursor}
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
             formatter={(value) => [`${value} track${value === 1 ? '' : 's'}`, '']}
           />
-          <Bar dataKey="count" fill="var(--series-1)" radius={[4, 4, 0, 0]} maxBarSize={40} />
+          <Bar
+            dataKey="count"
+            fill="var(--accent)"
+            radius={[2, 2, 0, 0]}
+            maxBarSize={40}
+            {...chartAnimation}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

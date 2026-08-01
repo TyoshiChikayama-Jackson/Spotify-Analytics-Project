@@ -29,6 +29,9 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState(TABS[0].id)
+  // Bumped on every tab switch so the panel wrapper remounts and its
+  // entrance animation replays instead of a jarring instant swap.
+  const [panelKey, setPanelKey] = useState(0)
 
   useEffect(() => {
     async function init() {
@@ -58,14 +61,24 @@ function App() {
     setProfile(null)
   }
 
+  function handleTabChange(id) {
+    setActiveTab(id)
+    setPanelKey((key) => key + 1)
+  }
+
   if (loading) {
-    return <div className="container centered">Loading...</div>
+    return (
+      <div className="container centered">
+        <span className="brand-mark">SPOTIFY / ANALYTICS</span>
+      </div>
+    )
   }
 
   if (!loggedIn) {
     return (
       <div className="container centered">
-        <h1>Spotify Analytics Dashboard</h1>
+        <span className="brand-mark">SPOTIFY / ANALYTICS</span>
+        <h1>Listening Dashboard</h1>
         {error && <p className="error">{error}</p>}
         <button onClick={redirectToSpotifyAuthorize}>Connect to Spotify</button>
       </div>
@@ -77,13 +90,13 @@ function App() {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <h1>Spotify Analytics Dashboard</h1>
+        <h1>Listening Dashboard</h1>
         {profile && (
           <div className="profile">
             {profile.images?.[0]?.url && (
               <img src={profile.images[0].url} alt={profile.display_name} className="avatar" />
             )}
-            <span>{profile.display_name}</span>
+            <span className="profile-name">{profile.display_name}</span>
             <button className="secondary" onClick={handleLogout}>
               Log out
             </button>
@@ -94,20 +107,21 @@ function App() {
       {error && <p className="error">{error}</p>}
 
       <nav className="tab-nav" role="tablist" aria-label="Dashboard sections">
-        {TABS.map((tab) => (
+        {TABS.map((tab, index) => (
           <button
             key={tab.id}
             role="tab"
             aria-selected={activeTab === tab.id}
             className={`tab-nav-item ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
           >
+            <span className="tab-index">{String(index + 1).padStart(2, '0')}</span>
             {tab.label}
           </button>
         ))}
       </nav>
 
-      <main>
+      <main key={panelKey} className="tab-panel">
         <ActiveComponent />
       </main>
     </div>

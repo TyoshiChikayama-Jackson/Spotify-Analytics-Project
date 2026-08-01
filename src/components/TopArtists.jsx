@@ -22,7 +22,7 @@ export default function TopArtists() {
 
       <TimeRangeToggle value={timeRange} onChange={setTimeRange} />
 
-      {loading && <SectionLoading />}
+      {loading && <SectionLoading count={8} />}
       {!loading && error && <SectionError message={error} onRetry={refresh} />}
 
       {!loading && !error && items.length === 0 && (
@@ -35,7 +35,7 @@ export default function TopArtists() {
 
           <ol className="ranked-list">
             {items.map((artist, index) => (
-              <li key={artist.id} className="ranked-item">
+              <li key={artist.id} className="ranked-item" style={{ '--i': index }}>
                 <span className="rank">{index + 1}</span>
                 {artist.images?.[artist.images.length - 1]?.url && (
                   <img

@@ -26,7 +26,7 @@ export default function RecentlyPlayed() {
         <RefreshButton onClick={refresh} disabled={refreshing} />
       </div>
 
-      {loading && <SectionLoading />}
+      {loading && <SectionLoading count={8} />}
       {!loading && error && <SectionError message={error} onRetry={refresh} />}
 
       {!loading && !error && items.length === 0 && (
@@ -37,24 +37,26 @@ export default function RecentlyPlayed() {
         <>
           <RecentlyPlayedChart items={items} />
 
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Track</th>
-                <th>Artist</th>
-                <th>Played at</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item, index) => (
-                <tr key={`${item.played_at}-${index}`}>
-                  <td>{item.track.name}</td>
-                  <td>{item.track.artists.map((a) => a.name).join(', ')}</td>
-                  <td className="muted">{formatPlayedAt(item.played_at)}</td>
+          <div className="data-table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Track</th>
+                  <th>Artist</th>
+                  <th>Played at</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {items.map((item, index) => (
+                  <tr key={`${item.played_at}-${index}`} style={{ '--i': index }}>
+                    <td>{item.track.name}</td>
+                    <td>{item.track.artists.map((a) => a.name).join(', ')}</td>
+                    <td className="muted">{formatPlayedAt(item.played_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </section>

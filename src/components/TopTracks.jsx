@@ -21,7 +21,7 @@ export default function TopTracks() {
 
       <TimeRangeToggle value={timeRange} onChange={setTimeRange} />
 
-      {loading && <SectionLoading />}
+      {loading && <SectionLoading count={8} />}
       {!loading && error && <SectionError message={error} onRetry={refresh} />}
 
       {!loading && !error && items.length === 0 && (
@@ -31,7 +31,7 @@ export default function TopTracks() {
       {!loading && !error && items.length > 0 && (
         <ol className="ranked-list">
           {items.map((track, index) => (
-            <li key={track.id} className="ranked-item">
+            <li key={track.id} className="ranked-item" style={{ '--i': index }}>
               <span className="rank">{index + 1}</span>
               {track.album?.images?.[track.album.images.length - 1]?.url && (
                 <img

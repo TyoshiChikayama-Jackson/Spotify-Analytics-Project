@@ -2,6 +2,7 @@ import { getSavedTracks } from '../api/spotifyData.js'
 import { useSpotifyData } from '../hooks/useSpotifyData.js'
 import { SectionLoading, SectionError, SectionEmpty, RefreshButton } from './SectionState.jsx'
 import SavedTracksByEra from './SavedTracksByEra.jsx'
+import AnimatedNumber from './AnimatedNumber.jsx'
 
 export default function Library() {
   const { data, loading, error, refreshing, refresh } = useSpotifyData(
@@ -17,7 +18,7 @@ export default function Library() {
         <RefreshButton onClick={refresh} disabled={refreshing} />
       </div>
 
-      {loading && <SectionLoading />}
+      {loading && <SectionLoading variant="chart" />}
       {!loading && error && <SectionError message={error} onRetry={refresh} />}
 
       {!loading && !error && items.length === 0 && (
@@ -27,7 +28,9 @@ export default function Library() {
       {!loading && !error && items.length > 0 && (
         <>
           <p className="stat-tile">
-            <span className="stat-value">{data.total}</span>
+            <span className="stat-value">
+              <AnimatedNumber value={data.total} />
+            </span>
             <span className="muted"> saved tracks</span>
             {data.total > items.length && (
               <span className="muted small">

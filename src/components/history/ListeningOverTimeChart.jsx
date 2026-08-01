@@ -1,5 +1,13 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { monthlyListeningVolume } from '../../utils/historyStats.js'
+import {
+  axisTick,
+  axisLine,
+  gridStroke,
+  tooltipContentStyle,
+  tooltipLabelStyle,
+  chartAnimation,
+} from '../chartTheme.js'
 
 function formatMonthLabel(month) {
   const [year, monthNum] = month.split('-')
@@ -28,28 +36,18 @@ export default function ListeningOverTimeChart({ entries }) {
               <stop offset="100%" stopColor="var(--series-1)" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid vertical={false} stroke="var(--gridline)" />
+          <CartesianGrid vertical={false} stroke={gridStroke} />
           <XAxis
             dataKey="label"
-            tick={{ fill: 'var(--muted)', fontSize: 11 }}
-            axisLine={{ stroke: 'var(--baseline)' }}
+            tick={axisTick}
+            axisLine={axisLine}
             tickLine={false}
             interval={tickInterval}
           />
-          <YAxis
-            tick={{ fill: 'var(--muted)', fontSize: 11 }}
-            axisLine={false}
-            tickLine={false}
-            width={36}
-          />
+          <YAxis tick={axisTick} axisLine={false} tickLine={false} width={36} />
           <Tooltip
-            contentStyle={{
-              background: 'var(--surface-1)',
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              fontSize: 12,
-            }}
-            labelStyle={{ color: 'var(--text-primary)' }}
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
             formatter={(value) => [`${Math.round(value).toLocaleString()} hrs`, '']}
           />
           <Area
@@ -58,6 +56,7 @@ export default function ListeningOverTimeChart({ entries }) {
             stroke="var(--series-1)"
             strokeWidth={2}
             fill="url(#listeningVolumeFill)"
+            {...chartAnimation}
           />
         </AreaChart>
       </ResponsiveContainer>
