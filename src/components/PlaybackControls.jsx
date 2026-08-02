@@ -1,5 +1,11 @@
 import { useState } from 'react'
-import { pausePlayback, startPlayback, skipToNext, skipToPrevious } from '../api/spotifyData.js'
+import {
+  pausePlayback,
+  startPlayback,
+  skipToNext,
+  skipToPrevious,
+  setShuffle,
+} from '../api/spotifyData.js'
 
 const NO_DEVICE_MESSAGE = 'Open Spotify on a device to control playback from here.'
 // A 403 here almost always means the current access token predates the
@@ -21,8 +27,8 @@ function describeError(err) {
 // resolve device_id. So controls stay enabled unconditionally and a real
 // no-device failure is surfaced from the actual attempt (404), the same
 // way MiniTrackStrip's click-to-play already handles it successfully.
-export default function PlaybackControls({ isPlaying, onChanged }) {
-  const [pending, setPending] = useState(null) // 'play' | 'next' | 'previous' | null
+export default function PlaybackControls({ isPlaying, shuffleState, onChanged }) {
+  const [pending, setPending] = useState(null) // 'play' | 'next' | 'previous' | 'shuffle' | null
   const [error, setError] = useState(null)
 
   async function runAction(name, action) {
@@ -42,6 +48,10 @@ export default function PlaybackControls({ isPlaying, onChanged }) {
   }
 
   const busy = pending !== null
+  // No optimistic flip here — onChanged() re-fetches the real shuffle_state
+  // after the call resolves, so the button reflects Spotify's actual state
+  // rather than an assumed one that could drift if the toggle silently fails.
+  const shuffleOn = shuffleState === true
 
   return (
     <div className="playback-controls">
@@ -86,6 +96,22 @@ export default function PlaybackControls({ isPlaying, onChanged }) {
         >
           <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
             <path d="M13 2.5a.5.5 0 0 0-1 0v4.6L4.2 2.23A.5.5 0 0 0 3.5 2.5v11a.5.5 0 0 0 .7.43L12 9.06v4.44a.5.5 0 0 0 1 0v-11z" />
+          </svg>
+        </button>
+
+        <button
+          className={`secondary playback-btn playback-btn-shuffle ${shuffleOn ? 'is-active' : ''}`}
+          onClick={() => runAction('shuffle', () => setShuffle(!shuffleOn))}
+          disabled={busy}
+          aria-label={shuffleOn ? 'Turn shuffle off' : 'Turn shuffle on'}
+          aria-pressed={shuffleOn}
+          title={shuffleOn ? 'Shuffle: on' : 'Shuffle: off'}
+        >
+          <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M1.5 4h2.3c1 0 1.9.5 2.4 1.4l4 6.2c.5.9 1.4 1.4 2.4 1.4h1.9" />
+            <path d="M12.5 3.5 14.5 5l-2 1.5" />
+            <path d="M1.5 12h2.3c1 0 1.9-.5 2.4-1.4l.6-1" />
+            <path d="M12.5 12.5 14.5 11l-2-1.5" />
           </svg>
         </button>
       </div>

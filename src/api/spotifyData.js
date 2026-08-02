@@ -145,6 +145,17 @@ export async function skipToPrevious() {
   })
 }
 
+export async function setShuffle(state) {
+  const deviceId = await resolveActiveDeviceId()
+  return spotifyFetch('/me/player/shuffle', {
+    method: 'PUT',
+    params: {
+      state: state ? 'true' : 'false',
+      ...(deviceId ? { device_id: deviceId } : {}),
+    },
+  })
+}
+
 export function getRecentlyPlayed(limit = 50) {
   return spotifyFetch('/me/player/recently-played', { params: { limit } })
 }
