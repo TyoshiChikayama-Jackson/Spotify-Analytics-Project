@@ -47,6 +47,10 @@ export async function redirectToSpotifyAuthorize() {
     redirect_uri: getRedirectUri(),
     code_challenge_method: 'S256',
     code_challenge: codeChallenge,
+    // Forces Spotify to always show the consent screen, even for an
+    // already-approved app — without this, Spotify can silently reuse a
+    // prior authorization and never actually grant newly added scopes.
+    show_dialog: 'true',
   })
 
   window.location.href = `${AUTHORIZE_URL}?${params.toString()}`
