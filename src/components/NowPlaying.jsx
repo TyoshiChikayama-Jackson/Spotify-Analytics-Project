@@ -89,10 +89,7 @@ function EmptyNowPlaying({ recentTracks, onChanged }) {
       <p className="track-name">Nothing is currently playing</p>
       <p className="muted small">Checking automatically — or start a track on Spotify now.</p>
 
-      {/* No track loaded means device state is unknown until an action is
-          attempted — hasActiveDevice stays undefined so the buttons are
-          enabled and a real 404 (not a guess) drives the "no device" message. */}
-      <PlaybackControls isPlaying={false} hasActiveDevice={undefined} onChanged={onChanged} />
+      <PlaybackControls isPlaying={false} onChanged={onChanged} />
 
       <MiniTrackStrip title="Played recently" tracks={recentTracks} onChanged={onChanged} />
     </div>
@@ -202,7 +199,6 @@ export default function NowPlaying() {
 
               <PlaybackControls
                 isPlaying={Boolean(data.is_playing)}
-                hasActiveDevice={data.device != null}
                 onChanged={refresh}
               />
             </div>

@@ -14,7 +14,14 @@ function describeError(err) {
   return `Playback control failed: ${err.message}`
 }
 
-export default function PlaybackControls({ isPlaying, hasActiveDevice, onChanged }) {
+// Note: there is no reliable "is a device active" signal available up
+// front — GET /v1/me/player/currently-playing (what feeds this component)
+// doesn't include device info at all; only a separate GET /v1/me/player
+// call does, and spotifyData.js already makes that call per-action to
+// resolve device_id. So controls stay enabled unconditionally and a real
+// no-device failure is surfaced from the actual attempt (404), the same
+// way MiniTrackStrip's click-to-play already handles it successfully.
+export default function PlaybackControls({ isPlaying, onChanged }) {
   const [pending, setPending] = useState(null) // 'play' | 'next' | 'previous' | null
   const [error, setError] = useState(null)
 
@@ -34,7 +41,6 @@ export default function PlaybackControls({ isPlaying, hasActiveDevice, onChanged
     }
   }
 
-  const disabled = hasActiveDevice === false
   const busy = pending !== null
 
   return (
@@ -43,7 +49,7 @@ export default function PlaybackControls({ isPlaying, hasActiveDevice, onChanged
         <button
           className="secondary playback-btn"
           onClick={() => runAction('previous', skipToPrevious)}
-          disabled={disabled || busy}
+          disabled={busy}
           aria-label="Previous track"
           title="Previous track"
         >
@@ -55,7 +61,7 @@ export default function PlaybackControls({ isPlaying, hasActiveDevice, onChanged
         <button
           className="playback-btn playback-btn-primary"
           onClick={() => runAction('play', isPlaying ? pausePlayback : startPlayback)}
-          disabled={disabled || busy}
+          disabled={busy}
           aria-label={isPlaying ? 'Pause' : 'Play'}
           title={isPlaying ? 'Pause' : 'Play'}
         >
@@ -74,7 +80,7 @@ export default function PlaybackControls({ isPlaying, hasActiveDevice, onChanged
         <button
           className="secondary playback-btn"
           onClick={() => runAction('next', skipToNext)}
-          disabled={disabled || busy}
+          disabled={busy}
           aria-label="Next track"
           title="Next track"
         >
@@ -84,7 +90,6 @@ export default function PlaybackControls({ isPlaying, hasActiveDevice, onChanged
         </button>
       </div>
 
-      {disabled && !error && <p className="muted small playback-note">{NO_DEVICE_MESSAGE}</p>}
       {error && (
         <p className="error playback-note" style={{ fontSize: '0.78rem' }}>
           {error}
