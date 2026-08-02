@@ -56,13 +56,27 @@ export async function redirectToSpotifyAuthorize() {
   window.location.href = `${AUTHORIZE_URL}?${params.toString()}`
 }
 
-function storeTokens({ access_token, refresh_token, expires_in }) {
+function storeTokens({ access_token, refresh_token, expires_in, scope }) {
   sessionStorage.setItem(ACCESS_TOKEN_KEY, access_token)
   if (refresh_token) {
     sessionStorage.setItem(REFRESH_TOKEN_KEY, refresh_token)
   }
   const expiresAt = Date.now() + expires_in * 1000
   sessionStorage.setItem(EXPIRES_AT_KEY, String(expiresAt))
+
+  // Spotify's token response includes the scopes actually granted, which
+  // can be a subset of what was requested if the app registration doesn't
+  // have all of them enabled — this is the ground truth for "why is this
+  // scope-gated call still 403ing after a fresh login."
+  if (scope) {
+    const granted = scope.split(' ')
+    const requested = SPOTIFY_SCOPES.split(' ')
+    const missing = requested.filter((s) => !granted.includes(s))
+    console.log('Spotify granted scopes:', granted)
+    if (missing.length > 0) {
+      console.warn('Requested but NOT granted:', missing)
+    }
+  }
 }
 
 async function exchangeCodeForTokens(code) {
