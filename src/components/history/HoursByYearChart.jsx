@@ -30,7 +30,7 @@ export default function HoursByYearChart({ entries }) {
           />
           <Bar
             dataKey="hours"
-            fill="var(--accent)"
+            fill="var(--series-1)"
             radius={[2, 2, 0, 0]}
             maxBarSize={48}
             {...chartAnimation}

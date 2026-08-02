@@ -14,13 +14,12 @@ import Library from './components/Library.jsx'
 import FullHistory from './components/history/FullHistory.jsx'
 import './App.css'
 
-const TABS = [
+const LIVE_TABS = [
   { id: 'now-playing', label: 'Now Playing', Component: NowPlaying },
   { id: 'recently-played', label: 'Recently Played', Component: RecentlyPlayed },
   { id: 'top-tracks', label: 'Top Tracks', Component: TopTracks },
   { id: 'top-artists', label: 'Top Artists', Component: TopArtists },
   { id: 'library', label: 'Library', Component: Library },
-  { id: 'full-history', label: 'Full History', Component: FullHistory },
 ]
 
 function App() {
@@ -28,7 +27,8 @@ function App() {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [activeTab, setActiveTab] = useState(TABS[0].id)
+  const [activeSection, setActiveSection] = useState('live')
+  const [activeLiveTab, setActiveLiveTab] = useState(LIVE_TABS[0].id)
   // Bumped on every tab switch so the panel wrapper remounts and its
   // entrance animation replays instead of a jarring instant swap.
   const [panelKey, setPanelKey] = useState(0)
@@ -61,8 +61,13 @@ function App() {
     setProfile(null)
   }
 
-  function handleTabChange(id) {
-    setActiveTab(id)
+  function handleSectionChange(section) {
+    setActiveSection(section)
+    setPanelKey((key) => key + 1)
+  }
+
+  function handleLiveTabChange(id) {
+    setActiveLiveTab(id)
     setPanelKey((key) => key + 1)
   }
 
@@ -85,7 +90,7 @@ function App() {
     )
   }
 
-  const ActiveComponent = TABS.find((tab) => tab.id === activeTab).Component
+  const ActiveLiveComponent = LIVE_TABS.find((tab) => tab.id === activeLiveTab).Component
 
   return (
     <div className="dashboard">
@@ -106,23 +111,47 @@ function App() {
 
       {error && <p className="error">{error}</p>}
 
-      <nav className="tab-nav" role="tablist" aria-label="Dashboard sections">
-        {TABS.map((tab, index) => (
-          <button
-            key={tab.id}
-            role="tab"
-            aria-selected={activeTab === tab.id}
-            className={`tab-nav-item ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => handleTabChange(tab.id)}
-          >
-            <span className="tab-index">{String(index + 1).padStart(2, '0')}</span>
-            {tab.label}
-          </button>
-        ))}
-      </nav>
+      <div className="section-switch" role="tablist" aria-label="Data source">
+        <button
+          role="tab"
+          data-section="live"
+          aria-selected={activeSection === 'live'}
+          className={`section-switch-item ${activeSection === 'live' ? 'active' : ''}`}
+          onClick={() => handleSectionChange('live')}
+        >
+          <span className="section-switch-dot" />
+          Live
+        </button>
+        <button
+          role="tab"
+          data-section="history"
+          aria-selected={activeSection === 'history'}
+          className={`section-switch-item ${activeSection === 'history' ? 'active' : ''}`}
+          onClick={() => handleSectionChange('history')}
+        >
+          <span className="section-switch-dot" />
+          Full History
+        </button>
+      </div>
+
+      {activeSection === 'live' && (
+        <nav className="tab-nav" role="tablist" aria-label="Live data sections">
+          {LIVE_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              role="tab"
+              aria-selected={activeLiveTab === tab.id}
+              className={`tab-nav-item ${activeLiveTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleLiveTabChange(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      )}
 
       <main key={panelKey} className="tab-panel">
-        <ActiveComponent />
+        {activeSection === 'live' ? <ActiveLiveComponent /> : <FullHistory />}
       </main>
     </div>
   )

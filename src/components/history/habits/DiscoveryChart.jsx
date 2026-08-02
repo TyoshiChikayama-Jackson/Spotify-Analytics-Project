@@ -94,14 +94,14 @@ export default function DiscoveryChart({ entries }) {
             dataKey="newCount"
             name={`New ${noun}`}
             stackId="discovery"
-            fill="var(--accent)"
+            fill="var(--series-1)"
             {...chartAnimation}
           />
           <Bar
             dataKey="familiarCount"
             name={`Familiar ${noun}`}
             stackId="discovery"
-            fill="var(--series-1)"
+            fill="var(--series-2)"
             radius={[2, 2, 0, 0]}
             {...chartAnimation}
           />

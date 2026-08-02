@@ -49,7 +49,7 @@ export default function SavedTracksByEra({ items }) {
           />
           <Bar
             dataKey="count"
-            fill="var(--accent)"
+            fill="var(--series-1)"
             radius={[2, 2, 0, 0]}
             maxBarSize={40}
             {...chartAnimation}

@@ -1,21 +1,22 @@
 import { dayHourHeatmap } from '../../utils/historyStats.js'
 
-// Sequential amber ramp, dark -> light on the graphite surface (matches the
-// --accent hue used for interactive UI elsewhere in this system).
+// Sequential indigo ramp, dark -> light on the slate surface (single hue,
+// matches --series-1 — the muted chart-data scale, kept separate from
+// --accent which is reserved for interactive UI elsewhere in this system).
 const SEQUENTIAL_STEPS = [
-  '#2a2011',
-  '#3a2c14',
-  '#4d3a17',
-  '#634a19',
-  '#7c5b1a',
-  '#976c1c',
-  '#b47f1e',
-  '#d2941f',
-  '#f0a83c',
-  '#f4bb63',
-  '#f7cd8b',
-  '#fadfb3',
-  '#fdf1db',
+  '#181c26',
+  '#1e2436',
+  '#232c4c',
+  '#293563',
+  '#2f3d7a',
+  '#3a4990',
+  '#4a5aab',
+  '#5c73c6',
+  '#6d8fe8',
+  '#8ea5ec',
+  '#aebef1',
+  '#cdd7f6',
+  '#e6ecfa',
 ]
 
 const HOUR_TICKS = [0, 6, 12, 18]

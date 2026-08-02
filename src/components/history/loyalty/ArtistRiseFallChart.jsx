@@ -74,8 +74,8 @@ export default function ArtistRiseFallChart({ entries }) {
           <AreaChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
             <defs>
               <linearGradient id="artistVolumeFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.35} />
-                <stop offset="100%" stopColor="var(--accent)" stopOpacity={0} />
+                <stop offset="0%" stopColor="var(--series-1)" stopOpacity={0.3} />
+                <stop offset="100%" stopColor="var(--series-1)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid vertical={false} stroke={gridStroke} />
@@ -95,7 +95,7 @@ export default function ArtistRiseFallChart({ entries }) {
             <Area
               type="monotone"
               dataKey="plays"
-              stroke="var(--accent)"
+              stroke="var(--series-1)"
               strokeWidth={2}
               fill="url(#artistVolumeFill)"
               {...chartAnimation}

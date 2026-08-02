@@ -12,11 +12,57 @@ import HabitsAndPatterns from './habits/HabitsAndPatterns.jsx'
 import ObsessionAndLoyalty from './loyalty/ObsessionAndLoyalty.jsx'
 import BigPicture from './bigpicture/BigPicture.jsx'
 
+const SUB_TABS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'habits', label: 'Habits & Patterns' },
+  { id: 'loyalty', label: 'Obsession & Loyalty' },
+  { id: 'bigpicture', label: 'Bigger Picture' },
+]
+
+function Overview({ entries }) {
+  return (
+    <>
+      <section className="panel">
+        <div className="panel-header">
+          <h2>Highlights</h2>
+        </div>
+        <HistoryHighlights entries={entries} />
+      </section>
+
+      <section className="panel">
+        <div className="panel-header">
+          <h2>Listening over time</h2>
+        </div>
+        <div className="chart-grid">
+          <HoursByYearChart entries={entries} />
+          <ListeningOverTimeChart entries={entries} />
+        </div>
+        <SkipRateChart entries={entries} />
+      </section>
+
+      <section className="panel">
+        <div className="panel-header">
+          <h2>When you listen</h2>
+        </div>
+        <ListeningHeatmap entries={entries} />
+      </section>
+
+      <section className="panel">
+        <div className="panel-header">
+          <h2>All-time favorites</h2>
+        </div>
+        <TopAllTime entries={entries} />
+      </section>
+    </>
+  )
+}
+
 export default function FullHistory() {
   const [entries, setEntries] = useState(null)
   const [summary, setSummary] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [subTab, setSubTab] = useState(SUB_TABS[0].id)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -64,41 +110,26 @@ export default function FullHistory() {
 
       {hasData && (
         <>
-          <section className="panel">
-            <div className="panel-header">
-              <h2>Highlights</h2>
-            </div>
-            <HistoryHighlights entries={entries} />
-          </section>
+          <nav className="tab-nav" role="tablist" aria-label="Full History sections">
+            {SUB_TABS.map((tab) => (
+              <button
+                key={tab.id}
+                role="tab"
+                aria-selected={subTab === tab.id}
+                className={`tab-nav-item ${subTab === tab.id ? 'active' : ''}`}
+                onClick={() => setSubTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
 
-          <section className="panel">
-            <div className="panel-header">
-              <h2>Listening over time</h2>
-            </div>
-            <div className="chart-grid">
-              <HoursByYearChart entries={entries} />
-              <ListeningOverTimeChart entries={entries} />
-            </div>
-            <SkipRateChart entries={entries} />
-          </section>
-
-          <section className="panel">
-            <div className="panel-header">
-              <h2>When you listen</h2>
-            </div>
-            <ListeningHeatmap entries={entries} />
-          </section>
-
-          <section className="panel">
-            <div className="panel-header">
-              <h2>All-time favorites</h2>
-            </div>
-            <TopAllTime entries={entries} />
-          </section>
-
-          <HabitsAndPatterns entries={entries} />
-          <ObsessionAndLoyalty entries={entries} />
-          <BigPicture entries={entries} />
+          <div key={subTab} className="tab-panel">
+            {subTab === 'overview' && <Overview entries={entries} />}
+            {subTab === 'habits' && <HabitsAndPatterns entries={entries} />}
+            {subTab === 'loyalty' && <ObsessionAndLoyalty entries={entries} />}
+            {subTab === 'bigpicture' && <BigPicture entries={entries} />}
+          </div>
         </>
       )}
     </div>

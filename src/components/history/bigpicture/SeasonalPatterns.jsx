@@ -38,7 +38,7 @@ export default function SeasonalPatterns({ entries }) {
           />
           <Bar
             dataKey="averageHours"
-            fill="var(--accent)"
+            fill="var(--series-1)"
             radius={[2, 2, 0, 0]}
             maxBarSize={36}
             {...chartAnimation}

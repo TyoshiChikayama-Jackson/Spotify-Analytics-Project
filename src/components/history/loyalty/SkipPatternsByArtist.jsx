@@ -110,7 +110,7 @@ export default function SkipPatternsByArtist({ entries }) {
           />
           <ZAxis range={[60, 60]} />
           <Tooltip cursor={{ strokeDasharray: '3 3', stroke: 'var(--baseline)' }} content={<SkipScatterTooltip />} />
-          <Scatter data={ranked} fill="var(--accent)" fillOpacity={0.75} />
+          <Scatter data={ranked} fill="var(--series-1)" fillOpacity={0.75} />
         </ScatterChart>
       </ResponsiveContainer>
     </div>

@@ -54,7 +54,7 @@ export default function TopGenresChart({ artists }) {
           />
           <Bar
             dataKey="count"
-            fill="var(--accent)"
+            fill="var(--series-1)"
             radius={[0, 2, 2, 0]}
             maxBarSize={20}
             {...chartAnimation}

@@ -1,6 +1,8 @@
 /* ==========================================================================
-   Design tokens — data-forward dashboard system.
-   Dark-first graphite surfaces, amber signal accent, monospace numerics.
+   Design tokens — restrained, professional dashboard system.
+   Cool slate neutrals, one muted indigo accent for interaction only.
+   Chart data uses a separate muted sequential scale + a single secondary
+   hue for the rare two-series case — never a per-category rainbow.
    Light mode is a full re-step of the same roles, not an inverted flip.
    ========================================================================== */
 
@@ -10,30 +12,36 @@
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', 'Consolas', 'Liberation Mono',
     monospace;
 
-  --page-plane: #0a0b0d;
-  --surface-1: #111318;
-  --surface-2: #171a21;
-  --text-primary: #f2f3f5;
-  --text-secondary: #9ba0ab;
-  --muted: #676c78;
-  --gridline: #23262e;
-  --baseline: #2f333d;
-  --border: rgba(242, 243, 245, 0.09);
-  --border-strong: rgba(242, 243, 245, 0.16);
-  --error: #e9776a;
-  --good: #4ec98e;
+  --page-plane: #0b0d10;
+  --surface-1: #12151a;
+  --surface-2: #181c23;
+  --text-primary: #eef0f3;
+  --text-secondary: #9aa1ad;
+  --muted: #666d7a;
+  --gridline: #232830;
+  --baseline: #2e3540;
+  --border: rgba(238, 240, 243, 0.08);
+  --border-strong: rgba(238, 240, 243, 0.14);
+  --error: #e78a83;
+  --good: #5cbf94;
 
-  --accent: #f0a83c;
-  --accent-ink: #1a1305;
-  --series-1: #4f9cf0;
+  /* Interaction accent — used ONLY for buttons, links, active states, focus rings. */
+  --accent: #6d8fe8;
+  --accent-ink: #0c1220;
 
-  --radius: 3px;
-  --shadow-panel: 0 1px 0 rgba(0, 0, 0, 0.4);
+  /* Chart data colors — separate from --accent by design. --series-1 is the
+     single sequential hue for magnitude (bars/lines/areas); --series-2 is
+     the one secondary hue for the rare two-series case (new/familiar,
+     platform categories). Both validated together via the dataviz skill's
+     palette validator (all-pairs CVD + normal-vision + contrast, both modes). */
+  --series-1: #6d8fe8;
+  --series-2: #3fa88f;
+
+  --radius: 4px;
+  --shadow-panel: none;
 
   color-scheme: dark;
   background: var(--page-plane);
-  background-image: radial-gradient(circle at 1px 1px, rgba(242, 243, 245, 0.045) 1px, transparent 0);
-  background-size: 28px 28px;
   color: var(--text-primary);
   min-height: 100vh;
   font-family: var(--font-sans);
@@ -43,43 +51,43 @@
 @media (prefers-color-scheme: light) {
   :root:where(:not([data-theme='dark'])) .container,
   :root:where(:not([data-theme='dark'])) .dashboard {
-    --page-plane: #f4f3ef;
-    --surface-1: #fcfbf8;
-    --surface-2: #f4f3ef;
-    --text-primary: #16161a;
-    --text-secondary: #55565f;
-    --muted: #83838c;
-    --gridline: #e2e0d8;
-    --border: rgba(22, 22, 26, 0.1);
-    --border-strong: rgba(22, 22, 26, 0.18);
-    --error: #b8392b;
-    --good: #21875a;
-    --accent: #b5691a;
-    --accent-ink: #fffaf0;
-    --series-1: #2a68c4;
+    --page-plane: #f7f8fa;
+    --surface-1: #ffffff;
+    --surface-2: #f1f3f6;
+    --text-primary: #14171c;
+    --text-secondary: #565d6b;
+    --muted: #868d99;
+    --gridline: #e5e8ed;
+    --border: rgba(20, 23, 28, 0.09);
+    --border-strong: rgba(20, 23, 28, 0.16);
+    --error: #b3392f;
+    --good: #227a5c;
+    --accent: #3f5fc4;
+    --accent-ink: #ffffff;
+    --series-1: #3f5fc4;
+    --series-2: #1a8a6e;
     color-scheme: light;
-    background-image: radial-gradient(circle at 1px 1px, rgba(22, 22, 26, 0.06) 1px, transparent 0);
   }
 }
 
 :root[data-theme='light'] .container,
 :root[data-theme='light'] .dashboard {
-  --page-plane: #f4f3ef;
-  --surface-1: #fcfbf8;
-  --surface-2: #f4f3ef;
-  --text-primary: #16161a;
-  --text-secondary: #55565f;
-  --muted: #83838c;
-  --gridline: #e2e0d8;
-  --border: rgba(22, 22, 26, 0.1);
-  --border-strong: rgba(22, 22, 26, 0.18);
-  --error: #b8392b;
-  --good: #21875a;
-  --accent: #b5691a;
-  --accent-ink: #fffaf0;
-  --series-1: #2a68c4;
+  --page-plane: #f7f8fa;
+  --surface-1: #ffffff;
+  --surface-2: #f1f3f6;
+  --text-primary: #14171c;
+  --text-secondary: #565d6b;
+  --muted: #868d99;
+  --gridline: #e5e8ed;
+  --border: rgba(20, 23, 28, 0.09);
+  --border-strong: rgba(20, 23, 28, 0.16);
+  --error: #b3392f;
+  --good: #227a5c;
+  --accent: #3f5fc4;
+  --accent-ink: #ffffff;
+  --series-1: #3f5fc4;
+  --series-2: #1a8a6e;
   color-scheme: light;
-  background-image: radial-gradient(circle at 1px 1px, rgba(22, 22, 26, 0.06) 1px, transparent 0);
 }
 
 * {
@@ -164,11 +172,10 @@ a {
 .dashboard-header h1::before {
   content: '';
   display: inline-block;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   background: var(--accent);
   border-radius: 50%;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .profile {
@@ -213,7 +220,7 @@ button {
 }
 
 button:hover {
-  background: color-mix(in srgb, var(--accent) 88%, white 12%);
+  background: color-mix(in srgb, var(--accent) 90%, var(--text-primary) 10%);
 }
 
 button:active {
@@ -244,16 +251,66 @@ button.secondary:hover {
 }
 
 /* ==========================================================================
-   Primary tab navigation
+   Section switch — top-level Live vs. History split
+   ========================================================================== */
+
+.section-switch {
+  display: inline-flex;
+  gap: 0.15rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.2rem;
+  margin-bottom: 1.25rem;
+}
+
+.section-switch-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 3px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.section-switch-item:hover {
+  color: var(--text-primary);
+}
+
+.section-switch-item.active {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.section-switch-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.section-switch-item[data-section='live'] .section-switch-dot {
+  background: var(--good);
+}
+
+.section-switch-item[data-section='history'] .section-switch-dot {
+  background: var(--series-2);
+}
+
+/* ==========================================================================
+   Primary tab navigation (within a section)
    ========================================================================== */
 
 .tab-nav {
   display: flex;
-  gap: 0.15rem;
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.25rem;
+  gap: 1.25rem;
+  border-bottom: 1px solid var(--border);
   margin-bottom: 1.5rem;
   overflow-x: auto;
 }
@@ -262,31 +319,25 @@ button.secondary:hover {
   position: relative;
   background: transparent;
   color: var(--text-secondary);
-  border: 1px solid transparent;
-  border-radius: 2px;
-  padding: 0.55rem 0.9rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  border: none;
+  border-radius: 0;
+  padding: 0 0 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0;
   white-space: nowrap;
-  transition: color 140ms ease, background 140ms ease;
+  border-bottom: 2px solid transparent;
+  transition: color 140ms ease, border-color 140ms ease;
 }
 
 .tab-nav-item:hover {
-  background: var(--surface-2);
   color: var(--text-primary);
 }
 
 .tab-nav-item.active {
-  color: var(--accent-ink);
-  background: var(--accent);
-}
-
-.tab-nav-item .tab-index {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  opacity: 0.6;
-  margin-right: 0.4rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
 }
 
 /* ==========================================================================
@@ -334,9 +385,8 @@ button.secondary:hover {
   background: var(--surface-1);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-panel);
-  padding: 1.25rem;
-  margin-bottom: 1.25rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
   text-align: left;
   animation: panel-in 320ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
@@ -346,16 +396,16 @@ button.secondary:hover {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 0.9rem;
+  margin-bottom: 1.1rem;
 }
 
 .panel-header h2,
 .panel-header h3 {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--text-secondary);
+  letter-spacing: 0.07em;
+  color: var(--muted);
   margin: 0;
 }
 
@@ -997,20 +1047,13 @@ p.small {
 
 .wrapped-card {
   position: relative;
-  background: linear-gradient(165deg, var(--surface-2) 0%, var(--surface-1) 60%);
+  background: var(--surface-2);
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius);
   padding: 1.75rem 1.5rem;
   overflow: hidden;
   animation: wrapped-in 420ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
-}
-
-.wrapped-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 55%);
-  pointer-events: none;
 }
 
 .wrapped-card-year {
@@ -1189,7 +1232,12 @@ p.small {
     align-items: flex-start;
   }
 
-  .tab-nav-item .tab-index {
-    display: none;
+  .section-switch {
+    width: 100%;
+  }
+
+  .section-switch-item {
+    flex: 1;
+    justify-content: center;
   }
 }

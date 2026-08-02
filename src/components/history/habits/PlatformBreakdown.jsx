@@ -10,13 +10,14 @@ import {
   chartAnimation,
 } from '../../chartTheme.js'
 
-// Categorical slots 1/2/3 from the validated palette (blue/orange/aqua),
-// plus the neutral muted tone for "Other/Unknown" — kept distinct from the
-// single-hue accent used for bar/line magnitude charts elsewhere.
+// Stepped shades of the single chart-data hue (--series-1), ordered by
+// typical volume — reads as one cohesive scale rather than a per-category
+// rainbow. "Other/Unknown" gets the neutral gray since it isn't a real
+// platform identity.
 const CATEGORY_COLORS = {
   Mobile: 'var(--series-1)',
-  Desktop: 'var(--accent)',
-  Web: '#1baf7a',
+  Desktop: 'color-mix(in srgb, var(--series-1) 65%, var(--surface-1))',
+  Web: 'color-mix(in srgb, var(--series-1) 35%, var(--surface-1))',
   'Other/Unknown': 'var(--muted)',
 }
 
