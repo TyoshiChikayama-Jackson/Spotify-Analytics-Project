@@ -186,11 +186,11 @@ export async function isTrackSaved(trackId) {
 }
 
 export function saveTrack(trackId) {
-  return spotifyFetch('/me/tracks', { method: 'PUT', body: { ids: [trackId] } })
+  return spotifyFetch('/me/tracks', { method: 'PUT', params: { ids: trackId } })
 }
 
 export function removeSavedTrack(trackId) {
-  return spotifyFetch('/me/tracks', { method: 'DELETE', body: { ids: [trackId] } })
+  return spotifyFetch('/me/tracks', { method: 'DELETE', params: { ids: trackId } })
 }
 
 export function getRecentlyPlayed(limit = 50) {

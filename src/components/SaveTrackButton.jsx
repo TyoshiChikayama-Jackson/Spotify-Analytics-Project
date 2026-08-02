@@ -22,7 +22,15 @@ export default function SaveTrackButton({ trackId }) {
       })
       .catch((err) => {
         console.error('Failed to check saved status:', err)
-        if (!cancelled) setSaved(null)
+        if (!cancelled) {
+          // Leaving `saved` at null keeps the button disabled forever with
+          // no visible sign anything went wrong — surface it instead.
+          setError(
+            err.status === 403
+              ? 'Playback controls need a permission this session doesn’t have yet — log out and log back in.'
+              : `Couldn't check saved status: ${err.message}`,
+          )
+        }
       })
     return () => {
       cancelled = true
