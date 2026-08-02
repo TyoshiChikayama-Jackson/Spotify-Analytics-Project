@@ -11,13 +11,8 @@ import { useNowPlayingPolling } from '../hooks/useNowPlayingPolling.js'
 import { useDominantColor } from '../hooks/useDominantColor.js'
 import { SectionLoading, SectionError, RefreshButton } from './SectionState.jsx'
 import PlaybackControls from './PlaybackControls.jsx'
-
-function formatMs(ms) {
-  const totalSeconds = Math.floor(ms / 1000)
-  const minutes = Math.floor(totalSeconds / 60)
-  const seconds = totalSeconds % 60
-  return `${minutes}:${String(seconds).padStart(2, '0')}`
-}
+import SeekBar from './SeekBar.jsx'
+import SaveTrackButton from './SaveTrackButton.jsx'
 
 function MiniTrackStrip({ title, tracks, onChanged }) {
   const [pendingUri, setPendingUri] = useState(null)
@@ -216,26 +211,23 @@ export default function NowPlaying() {
             </div>
 
             <div className="now-playing-info">
-              <p className="now-playing-track">{data.item.name}</p>
-              <p className="now-playing-artist">
-                {data.item.artists.map((a) => a.name).join(', ')}
-              </p>
+              <div className="now-playing-title-row">
+                <div style={{ minWidth: 0 }}>
+                  <p className="now-playing-track">{data.item.name}</p>
+                  <p className="now-playing-artist">
+                    {data.item.artists.map((a) => a.name).join(', ')}
+                  </p>
+                </div>
+                <SaveTrackButton trackId={currentTrackId} />
+              </div>
               <p className="muted small now-playing-album">{data.item.album.name}</p>
 
-              <div className="progress-track now-playing-progress" aria-hidden="true">
-                <div
-                  className="progress-fill"
-                  style={{
-                    width: `${Math.min(100, (data.progress_ms / data.item.duration_ms) * 100)}%`,
-                  }}
-                />
-              </div>
-              <p className="muted small now-playing-time">
-                <span style={{ fontFamily: 'var(--font-mono)' }}>
-                  {formatMs(data.progress_ms)} / {formatMs(data.item.duration_ms)}
-                </span>
-                {!data.is_playing && ' · Paused'}
-              </p>
+              <SeekBar
+                positionMs={data.progress_ms}
+                durationMs={data.item.duration_ms}
+                isPlaying={Boolean(data.is_playing)}
+                onSeeked={refresh}
+              />
 
               <PlaybackControls
                 isPlaying={Boolean(data.is_playing)}

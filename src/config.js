@@ -10,4 +10,5 @@ export const SPOTIFY_SCOPES = [
   'user-read-playback-state',
   'user-modify-playback-state',
   'user-library-read',
+  'user-library-modify',
 ].join(' ')

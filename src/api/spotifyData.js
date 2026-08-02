@@ -168,6 +168,31 @@ export async function setRepeatMode(mode) {
   })
 }
 
+export async function seekToPosition(positionMs) {
+  const deviceId = await resolveActiveDeviceId()
+  return spotifyFetch('/me/player/seek', {
+    method: 'PUT',
+    params: {
+      position_ms: String(Math.round(positionMs)),
+      ...(deviceId ? { device_id: deviceId } : {}),
+    },
+  })
+}
+
+// Requires user-library-modify (save/remove) and user-library-read (check).
+export async function isTrackSaved(trackId) {
+  const result = await spotifyFetch('/me/tracks/contains', { params: { ids: trackId } })
+  return Boolean(result?.[0])
+}
+
+export function saveTrack(trackId) {
+  return spotifyFetch('/me/tracks', { method: 'PUT', body: { ids: [trackId] } })
+}
+
+export function removeSavedTrack(trackId) {
+  return spotifyFetch('/me/tracks', { method: 'DELETE', body: { ids: [trackId] } })
+}
+
 export function getRecentlyPlayed(limit = 50) {
   return spotifyFetch('/me/player/recently-played', { params: { limit } })
 }

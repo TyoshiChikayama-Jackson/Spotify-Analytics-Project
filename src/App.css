@@ -573,6 +573,13 @@ p.small {
   min-width: 0;
 }
 
+.now-playing-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
 .now-playing-track {
   font-size: 1.4rem;
   font-weight: 700;
@@ -615,6 +622,85 @@ p.small {
 .now-playing-time {
   display: flex;
   gap: 0.4rem;
+}
+
+.seek-bar {
+  position: relative;
+  cursor: pointer;
+  touch-action: none;
+  padding: 8px 0;
+  margin: -8px 0 -3px;
+  background: none;
+}
+
+.seek-bar::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--gridline);
+}
+
+.seek-bar .progress-fill {
+  position: absolute;
+  top: 8px;
+  height: 5px;
+  transition: none;
+}
+
+.seek-bar-handle {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface-1);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 120ms ease;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.seek-bar:hover .seek-bar-handle,
+.seek-bar:focus-visible .seek-bar-handle,
+.seek-bar.is-pending .seek-bar-handle {
+  opacity: 1;
+}
+
+.seek-bar:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.seek-bar.is-pending {
+  opacity: 0.8;
+}
+
+.save-track-btn {
+  margin-top: -0.2rem;
+  color: var(--muted);
+  border-color: transparent;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.save-track-btn:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.save-track-btn.is-active {
+  color: var(--error);
+}
+
+.save-track-btn.is-active:hover:not(:disabled) {
+  background: var(--surface-2);
 }
 
 /* ==========================================================================
