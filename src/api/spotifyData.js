@@ -2,7 +2,7 @@ import { getValidAccessToken, refreshAccessToken } from '../auth/spotifyAuth.js'
 
 const API_BASE = 'https://api.spotify.com/v1'
 
-async function spotifyFetch(path, { params, method = 'GET', retrying = false } = {}) {
+async function spotifyFetch(path, { params, method = 'GET', body, retrying = false } = {}) {
   const token = await getValidAccessToken()
   const url = new URL(`${API_BASE}${path}`)
   if (params) {
@@ -11,28 +11,48 @@ async function spotifyFetch(path, { params, method = 'GET', retrying = false } =
     })
   }
 
+  const headers = { Authorization: `Bearer ${token}` }
+  // Spotify requires Content-Type: application/json whenever a body is
+  // sent (play/pause with context/uris/device_id) — omit it entirely when
+  // there's no body (next/previous, or play/pause with nothing to resume),
+  // since some APIs reject an empty body paired with a JSON content-type.
+  if (body !== undefined) headers['Content-Type'] = 'application/json'
+
   const response = await fetch(url, {
     method,
-    headers: { Authorization: `Bearer ${token}` },
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 
   if (response.status === 204) return null
 
   if (response.status === 401 && !retrying) {
     await refreshAccessToken()
-    return spotifyFetch(path, { params, method, retrying: true })
+    return spotifyFetch(path, { params, method, body, retrying: true })
   }
 
   if (!response.ok) {
-    let message = `Spotify API error: ${response.status} ${path}`
+    let parsedBody = null
     try {
-      const body = await response.json()
-      if (body?.error?.message) message = body.error.message
+      parsedBody = await response.json()
     } catch {
-      // response had no JSON body — keep the generic message
+      // response had no JSON body
     }
+
+    // Log the full response, not just a summarized message — this is the
+    // actual diagnostic the prompt asked for: status, path, and whatever
+    // Spotify's error body said, visible in devtools even if the UI only
+    // shows a short message.
+    console.error(`Spotify API error on ${method} ${path}:`, {
+      status: response.status,
+      statusText: response.statusText,
+      body: parsedBody,
+    })
+
+    const message = parsedBody?.error?.message || `Spotify API error: ${response.status} ${path}`
     const error = new Error(message)
     error.status = response.status
+    error.spotifyReason = parsedBody?.error?.reason ?? null
     throw error
   }
 
@@ -49,24 +69,71 @@ export function getQueue() {
   return spotifyFetch('/me/player/queue')
 }
 
+// Full playback state including the active device, if any. Used to resolve
+// a device_id for play/pause — Spotify's docs note that when a user has
+// multiple devices (or the "active" device is ambiguous), passing device_id
+// explicitly is more reliable than omitting it and letting Spotify guess.
+export function getPlaybackState() {
+  return spotifyFetch('/me/player')
+}
+
+async function resolveActiveDeviceId() {
+  try {
+    const state = await getPlaybackState()
+    return state?.device?.id ?? null
+  } catch {
+    return null
+  }
+}
+
 // Playback controls — require the user-modify-playback-state scope and an
 // active device (the Spotify app open somewhere). Spotify returns 404 with
-// "No active device found" when none exists; callers should check
-// error.status === 404 to show that case distinctly from other failures.
-export function pausePlayback() {
-  return spotifyFetch('/me/player/pause', { method: 'PUT' })
+// "No active device found" when none exists, and 403 when the token lacks
+// the required scope (stale token from before this scope was added) —
+// callers should check error.status to distinguish these.
+export async function pausePlayback() {
+  const deviceId = await resolveActiveDeviceId()
+  return spotifyFetch('/me/player/pause', {
+    method: 'PUT',
+    params: deviceId ? { device_id: deviceId } : undefined,
+  })
 }
 
-export function startPlayback() {
-  return spotifyFetch('/me/player/play', { method: 'PUT' })
+export async function startPlayback() {
+  const deviceId = await resolveActiveDeviceId()
+  return spotifyFetch('/me/player/play', {
+    method: 'PUT',
+    params: deviceId ? { device_id: deviceId } : undefined,
+  })
 }
 
-export function skipToNext() {
-  return spotifyFetch('/me/player/next', { method: 'POST' })
+// Starts playback of a single specific track (click-to-play from the queue
+// or recently-played strip). Per Spotify's docs, /me/player/play takes the
+// device_id as a query param and the track(s) to play as a `uris` array in
+// the JSON body.
+export async function playTrackUri(trackUri) {
+  const deviceId = await resolveActiveDeviceId()
+  return spotifyFetch('/me/player/play', {
+    method: 'PUT',
+    params: deviceId ? { device_id: deviceId } : undefined,
+    body: { uris: [trackUri] },
+  })
 }
 
-export function skipToPrevious() {
-  return spotifyFetch('/me/player/previous', { method: 'POST' })
+export async function skipToNext() {
+  const deviceId = await resolveActiveDeviceId()
+  return spotifyFetch('/me/player/next', {
+    method: 'POST',
+    params: deviceId ? { device_id: deviceId } : undefined,
+  })
+}
+
+export async function skipToPrevious() {
+  const deviceId = await resolveActiveDeviceId()
+  return spotifyFetch('/me/player/previous', {
+    method: 'POST',
+    params: deviceId ? { device_id: deviceId } : undefined,
+  })
 }
 
 export function getRecentlyPlayed(limit = 50) {

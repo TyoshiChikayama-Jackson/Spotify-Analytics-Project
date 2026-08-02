@@ -730,6 +730,41 @@ p.small {
   min-width: 0;
 }
 
+.recent-strip-item-clickable {
+  width: 100%;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: normal;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 0.3rem;
+  margin: -0.3rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.recent-strip-item-clickable:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.recent-strip-item-clickable:hover:not(:disabled) .recent-strip-track {
+  color: var(--accent);
+}
+
+.recent-strip-item-clickable:disabled {
+  cursor: default;
+  transform: none;
+  opacity: 1;
+}
+
+.recent-strip-item-clickable.is-pending {
+  opacity: 0.6;
+}
+
 .recent-strip-art {
   width: 36px;
   height: 36px;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getCurrentlyPlaying, getRecentlyPlayed, getQueue } from '../api/spotifyData.js'
+import { getCurrentlyPlaying, getRecentlyPlayed, getQueue, playTrackUri } from '../api/spotifyData.js'
 import { useSpotifyData } from '../hooks/useSpotifyData.js'
 import { useNowPlayingPolling } from '../hooks/useNowPlayingPolling.js'
 import { useDominantColor } from '../hooks/useDominantColor.js'
@@ -13,8 +13,33 @@ function formatMs(ms) {
   return `${minutes}:${String(seconds).padStart(2, '0')}`
 }
 
-function MiniTrackStrip({ title, tracks }) {
+function MiniTrackStrip({ title, tracks, onChanged }) {
+  const [pendingUri, setPendingUri] = useState(null)
+  const [error, setError] = useState(null)
+
   if (tracks.length === 0) return null
+
+  async function handleClick(track) {
+    if (!track.uri || pendingUri) return
+    setPendingUri(track.uri)
+    setError(null)
+    try {
+      await playTrackUri(track.uri)
+      await onChanged()
+    } catch (err) {
+      console.error(`Click-to-play failed for "${track.name}":`, err)
+      setError(
+        err.status === 404
+          ? 'Open Spotify on a device to play tracks from here.'
+          : err.status === 403
+            ? 'Playback controls need a permission this session doesn’t have yet — log out and log back in.'
+            : `Couldn't play this track: ${err.message}`,
+      )
+    } finally {
+      setPendingUri(null)
+    }
+  }
+
   return (
     <div className="recent-strip">
       <p className="chart-title" style={{ margin: '0 0 0.6rem' }}>
@@ -22,7 +47,14 @@ function MiniTrackStrip({ title, tracks }) {
       </p>
       <div className="recent-strip-items">
         {tracks.map((track, index) => (
-          <div className="recent-strip-item" key={`${track.id ?? track.uri}-${index}`}>
+          <button
+            type="button"
+            className={`recent-strip-item recent-strip-item-clickable ${pendingUri === track.uri ? 'is-pending' : ''}`}
+            key={`${track.id ?? track.uri}-${index}`}
+            onClick={() => handleClick(track)}
+            disabled={pendingUri !== null}
+            title={`Play "${track.name}"`}
+          >
             {track.album?.images?.[track.album.images.length - 1]?.url && (
               <img
                 src={track.album.images[track.album.images.length - 1].url}
@@ -34,9 +66,14 @@ function MiniTrackStrip({ title, tracks }) {
               <p className="recent-strip-track">{track.name}</p>
               <p className="muted small">{track.artists.map((a) => a.name).join(', ')}</p>
             </div>
-          </div>
+          </button>
         ))}
       </div>
+      {error && (
+        <p className="error playback-note" style={{ fontSize: '0.78rem' }}>
+          {error}
+        </p>
+      )}
     </div>
   )
 }
@@ -57,7 +94,7 @@ function EmptyNowPlaying({ recentTracks, onChanged }) {
           enabled and a real 404 (not a guess) drives the "no device" message. */}
       <PlaybackControls isPlaying={false} hasActiveDevice={undefined} onChanged={onChanged} />
 
-      <MiniTrackStrip title="Played recently" tracks={recentTracks} />
+      <MiniTrackStrip title="Played recently" tracks={recentTracks} onChanged={onChanged} />
     </div>
   )
 }
@@ -171,8 +208,8 @@ export default function NowPlaying() {
             </div>
           </div>
 
-          <MiniTrackStrip title="Next up" tracks={upcomingTracks} />
-          <MiniTrackStrip title="Played before this" tracks={recentTracks} />
+          <MiniTrackStrip title="Next up" tracks={upcomingTracks} onChanged={refresh} />
+          <MiniTrackStrip title="Played before this" tracks={recentTracks} onChanged={refresh} />
         </div>
       )}
     </section>

@@ -2,6 +2,17 @@ import { useState } from 'react'
 import { pausePlayback, startPlayback, skipToNext, skipToPrevious } from '../api/spotifyData.js'
 
 const NO_DEVICE_MESSAGE = 'Open Spotify on a device to control playback from here.'
+// A 403 here almost always means the current access token predates the
+// user-modify-playback-state scope being added — refreshing won't fix this,
+// since a refresh token reissues under the SAME originally-granted scopes.
+// Only a fresh login through Spotify's consent screen grants the new scope.
+const SCOPE_MESSAGE = 'Playback controls need a permission this session doesn’t have yet — log out and log back in to enable them.'
+
+function describeError(err) {
+  if (err.status === 404) return NO_DEVICE_MESSAGE
+  if (err.status === 403) return SCOPE_MESSAGE
+  return `Playback control failed: ${err.message}`
+}
 
 export default function PlaybackControls({ isPlaying, hasActiveDevice, onChanged }) {
   const [pending, setPending] = useState(null) // 'play' | 'next' | 'previous' | null
@@ -14,7 +25,10 @@ export default function PlaybackControls({ isPlaying, hasActiveDevice, onChanged
       await action()
       await onChanged()
     } catch (err) {
-      setError(err.status === 404 ? NO_DEVICE_MESSAGE : err.message)
+      // spotifyData.js already console.error's the full response (status +
+      // body) for every failed call — this is the user-facing summary.
+      console.error(`Playback control "${name}" failed:`, err)
+      setError(describeError(err))
     } finally {
       setPending(null)
     }
@@ -71,7 +85,11 @@ export default function PlaybackControls({ isPlaying, hasActiveDevice, onChanged
       </div>
 
       {disabled && !error && <p className="muted small playback-note">{NO_DEVICE_MESSAGE}</p>}
-      {error && <p className="error playback-note" style={{ fontSize: '0.78rem' }}>{error}</p>}
+      {error && (
+        <p className="error playback-note" style={{ fontSize: '0.78rem' }}>
+          {error}
+        </p>
+      )}
     </div>
   )
 }
