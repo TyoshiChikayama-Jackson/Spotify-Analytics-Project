@@ -919,6 +919,64 @@ p.small {
 }
 
 /* ==========================================================================
+   On Repeat filters (Obsession & Loyalty)
+   ========================================================================== */
+
+.on-repeat-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.on-repeat-filters-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.on-repeat-sort-select {
+  flex: 1;
+  min-width: 200px;
+}
+
+.chip-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.filter-chip:hover {
+  background: var(--gridline);
+  color: var(--text-primary);
+}
+
+.filter-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.load-more-button {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+/* ==========================================================================
    Year in Review (Bigger Picture) — the celebratory "wrapped" card
    ========================================================================== */
 
