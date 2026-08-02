@@ -56,7 +56,16 @@ async function spotifyFetch(path, { params, method = 'GET', body, retrying = fal
     throw error
   }
 
-  return response.json()
+  // Playback control endpoints (play/pause/next/previous) are documented to
+  // return 204, but can come back as 200 with an empty or non-JSON body in
+  // practice — don't assume every "ok" response is parseable JSON.
+  const text = await response.text()
+  if (!text) return null
+  try {
+    return JSON.parse(text)
+  } catch {
+    return null
+  }
 }
 
 export function getCurrentlyPlaying() {
