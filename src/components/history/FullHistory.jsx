@@ -8,6 +8,7 @@ import ListeningOverTimeChart from './ListeningOverTimeChart.jsx'
 import ListeningHeatmap from './ListeningHeatmap.jsx'
 import SkipRateChart from './SkipRateChart.jsx'
 import TopAllTime from './TopAllTime.jsx'
+import HabitsAndPatterns from './habits/HabitsAndPatterns.jsx'
 
 export default function FullHistory() {
   const [entries, setEntries] = useState(null)
@@ -92,6 +93,8 @@ export default function FullHistory() {
             </div>
             <TopAllTime entries={entries} />
           </section>
+
+          <HabitsAndPatterns entries={entries} />
         </>
       )}
     </div>
