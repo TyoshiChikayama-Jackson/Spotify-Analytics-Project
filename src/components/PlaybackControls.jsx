@@ -5,7 +5,10 @@ import {
   skipToNext,
   skipToPrevious,
   setShuffle,
+  setRepeatMode,
 } from '../api/spotifyData.js'
+
+const REPEAT_CYCLE = ['off', 'context', 'track']
 
 const NO_DEVICE_MESSAGE = 'Open Spotify on a device to control playback from here.'
 // A 403 here almost always means the current access token predates the
@@ -27,8 +30,8 @@ function describeError(err) {
 // resolve device_id. So controls stay enabled unconditionally and a real
 // no-device failure is surfaced from the actual attempt (404), the same
 // way MiniTrackStrip's click-to-play already handles it successfully.
-export default function PlaybackControls({ isPlaying, shuffleState, onChanged }) {
-  const [pending, setPending] = useState(null) // 'play' | 'next' | 'previous' | 'shuffle' | null
+export default function PlaybackControls({ isPlaying, shuffleState, repeatState, onChanged }) {
+  const [pending, setPending] = useState(null) // 'play' | 'next' | 'previous' | 'shuffle' | 'repeat' | null
   const [error, setError] = useState(null)
 
   async function runAction(name, action) {
@@ -52,6 +55,15 @@ export default function PlaybackControls({ isPlaying, shuffleState, onChanged })
   // after the call resolves, so the button reflects Spotify's actual state
   // rather than an assumed one that could drift if the toggle silently fails.
   const shuffleOn = shuffleState === true
+
+  // Same non-optimistic approach as shuffle: compute the next mode from the
+  // real current repeatState (falling back to 'off' if it's unknown) and
+  // let onChanged() re-fetch the true value after the call resolves.
+  function nextRepeatMode() {
+    const currentIndex = REPEAT_CYCLE.indexOf(repeatState)
+    const fromIndex = currentIndex === -1 ? 0 : currentIndex
+    return REPEAT_CYCLE[(fromIndex + 1) % REPEAT_CYCLE.length]
+  }
 
   return (
     <div className="playback-controls">
@@ -113,6 +125,30 @@ export default function PlaybackControls({ isPlaying, shuffleState, onChanged })
             <path d="M1.5 12h2.3c1 0 1.9-.5 2.4-1.4l.6-1" />
             <path d="M12.5 12.5 14.5 11l-2-1.5" />
           </svg>
+        </button>
+
+        <button
+          className={`secondary playback-btn playback-btn-repeat ${repeatState && repeatState !== 'off' ? 'is-active' : ''}`}
+          onClick={() => runAction('repeat', () => setRepeatMode(nextRepeatMode()))}
+          disabled={busy}
+          aria-label={
+            repeatState === 'track'
+              ? 'Repeat: one track (click to turn off)'
+              : repeatState === 'context'
+                ? 'Repeat: all (click to repeat one track)'
+                : 'Repeat: off (click to repeat all)'
+          }
+          title={
+            repeatState === 'track' ? 'Repeat: one track' : repeatState === 'context' ? 'Repeat: all' : 'Repeat: off'
+          }
+        >
+          <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M2 6.5V6a3 3 0 0 1 3-3h6.5" />
+            <path d="M11.5 1 14 3l-2.5 2" />
+            <path d="M14 9.5v.5a3 3 0 0 1-3 3H4.5" />
+            <path d="M4.5 15 2 13l2.5-2" />
+          </svg>
+          {repeatState === 'track' && <span className="playback-btn-repeat-badge">1</span>}
         </button>
       </div>
 

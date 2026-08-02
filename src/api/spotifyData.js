@@ -156,6 +156,18 @@ export async function setShuffle(state) {
   })
 }
 
+// mode is one of 'track' | 'context' | 'off', matching Spotify's repeat_state values.
+export async function setRepeatMode(mode) {
+  const deviceId = await resolveActiveDeviceId()
+  return spotifyFetch('/me/player/repeat', {
+    method: 'PUT',
+    params: {
+      state: mode,
+      ...(deviceId ? { device_id: deviceId } : {}),
+    },
+  })
+}
+
 export function getRecentlyPlayed(limit = 50) {
   return spotifyFetch('/me/player/recently-played', { params: { limit } })
 }

@@ -95,7 +95,12 @@ function EmptyNowPlaying({ recentTracks, onChanged }) {
       <p className="track-name">Nothing is currently playing</p>
       <p className="muted small">Checking automatically — or start a track on Spotify now.</p>
 
-      <PlaybackControls isPlaying={false} shuffleState={null} onChanged={onChanged} />
+      <PlaybackControls
+        isPlaying={false}
+        shuffleState={null}
+        repeatState={null}
+        onChanged={onChanged}
+      />
 
       <MiniTrackStrip title="Played recently" tracks={recentTracks} onChanged={onChanged} />
     </div>
@@ -110,25 +115,30 @@ export default function NowPlaying() {
 
   const currentTrackId = data?.item?.id ?? null
   const [queue, setQueue] = useState([])
-  // shuffle_state only exists on GET /v1/me/player, not on the
-  // currently-playing response this component polls — same lesson as the
-  // earlier "hasActiveDevice" bug: don't assume a field exists on the
-  // wrong endpoint's response. Fetched separately and refreshed whenever
-  // the track changes or a control action completes.
+  // shuffle_state and repeat_state only exist on GET /v1/me/player, not on
+  // the currently-playing response this component polls — same lesson as
+  // the earlier "hasActiveDevice" bug: don't assume a field exists on the
+  // wrong endpoint's response. Fetched together (one call) and refreshed
+  // whenever the track changes or a control action completes.
   const [shuffleState, setShuffleState] = useState(null)
+  const [repeatState, setRepeatState] = useState(null)
 
-  const refreshShuffleState = useCallback(async () => {
+  const refreshToggleStates = useCallback(async () => {
     try {
       const state = await getPlaybackState()
       setShuffleState(typeof state?.shuffle_state === 'boolean' ? state.shuffle_state : null)
+      setRepeatState(
+        ['off', 'context', 'track'].includes(state?.repeat_state) ? state.repeat_state : null,
+      )
     } catch {
       setShuffleState(null)
+      setRepeatState(null)
     }
   }, [])
 
   useEffect(() => {
-    refreshShuffleState()
-  }, [currentTrackId, refreshShuffleState])
+    refreshToggleStates()
+  }, [currentTrackId, refreshToggleStates])
 
   // Queue only needs to change when the current track changes, not on every
   // 5-10s poll tick — refetching it that often would be excessive for data
@@ -163,7 +173,7 @@ export default function NowPlaying() {
 
   async function refreshAll() {
     await refresh()
-    await refreshShuffleState()
+    await refreshToggleStates()
   }
 
   return (
@@ -230,6 +240,7 @@ export default function NowPlaying() {
               <PlaybackControls
                 isPlaying={Boolean(data.is_playing)}
                 shuffleState={shuffleState}
+                repeatState={repeatState}
                 onChanged={refreshAll}
               />
             </div>
