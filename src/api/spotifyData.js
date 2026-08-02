@@ -2,7 +2,7 @@ import { getValidAccessToken, refreshAccessToken } from '../auth/spotifyAuth.js'
 
 const API_BASE = 'https://api.spotify.com/v1'
 
-async function spotifyFetch(path, { params, retrying = false } = {}) {
+async function spotifyFetch(path, { params, method = 'GET', retrying = false } = {}) {
   const token = await getValidAccessToken()
   const url = new URL(`${API_BASE}${path}`)
   if (params) {
@@ -12,6 +12,7 @@ async function spotifyFetch(path, { params, retrying = false } = {}) {
   }
 
   const response = await fetch(url, {
+    method,
     headers: { Authorization: `Bearer ${token}` },
   })
 
@@ -19,11 +20,20 @@ async function spotifyFetch(path, { params, retrying = false } = {}) {
 
   if (response.status === 401 && !retrying) {
     await refreshAccessToken()
-    return spotifyFetch(path, { params, retrying: true })
+    return spotifyFetch(path, { params, method, retrying: true })
   }
 
   if (!response.ok) {
-    throw new Error(`Spotify API error: ${response.status} ${path}`)
+    let message = `Spotify API error: ${response.status} ${path}`
+    try {
+      const body = await response.json()
+      if (body?.error?.message) message = body.error.message
+    } catch {
+      // response had no JSON body — keep the generic message
+    }
+    const error = new Error(message)
+    error.status = response.status
+    throw error
   }
 
   return response.json()
@@ -37,6 +47,26 @@ export function getCurrentlyPlaying() {
 // playing item plus an array of upcoming queued tracks.
 export function getQueue() {
   return spotifyFetch('/me/player/queue')
+}
+
+// Playback controls — require the user-modify-playback-state scope and an
+// active device (the Spotify app open somewhere). Spotify returns 404 with
+// "No active device found" when none exists; callers should check
+// error.status === 404 to show that case distinctly from other failures.
+export function pausePlayback() {
+  return spotifyFetch('/me/player/pause', { method: 'PUT' })
+}
+
+export function startPlayback() {
+  return spotifyFetch('/me/player/play', { method: 'PUT' })
+}
+
+export function skipToNext() {
+  return spotifyFetch('/me/player/next', { method: 'POST' })
+}
+
+export function skipToPrevious() {
+  return spotifyFetch('/me/player/previous', { method: 'POST' })
 }
 
 export function getRecentlyPlayed(limit = 50) {

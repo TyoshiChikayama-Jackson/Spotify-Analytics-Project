@@ -618,6 +618,54 @@ p.small {
 }
 
 /* ==========================================================================
+   Playback controls
+   ========================================================================== */
+
+.playback-controls {
+  margin-top: 1.1rem;
+}
+
+.playback-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.playback-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.playback-btn-primary {
+  width: 44px;
+  height: 44px;
+}
+
+.playback-btn-primary svg {
+  margin-left: 1px; /* optical centering for the play triangle */
+}
+
+.playback-note {
+  margin: 0.6rem 0 0;
+}
+
+.now-playing-empty .playback-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.1rem 0 0.25rem;
+}
+
+.now-playing-empty .playback-note {
+  text-align: center;
+}
+
+/* ==========================================================================
    Now playing — empty state
    ========================================================================== */
 

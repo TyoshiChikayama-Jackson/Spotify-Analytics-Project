@@ -4,6 +4,7 @@ import { useSpotifyData } from '../hooks/useSpotifyData.js'
 import { useNowPlayingPolling } from '../hooks/useNowPlayingPolling.js'
 import { useDominantColor } from '../hooks/useDominantColor.js'
 import { SectionLoading, SectionError, RefreshButton } from './SectionState.jsx'
+import PlaybackControls from './PlaybackControls.jsx'
 
 function formatMs(ms) {
   const totalSeconds = Math.floor(ms / 1000)
@@ -40,7 +41,7 @@ function MiniTrackStrip({ title, tracks }) {
   )
 }
 
-function EmptyNowPlaying({ recentTracks }) {
+function EmptyNowPlaying({ recentTracks, onChanged }) {
   return (
     <div className="now-playing-empty">
       <div className="now-playing-empty-glyph" aria-hidden="true">
@@ -50,6 +51,11 @@ function EmptyNowPlaying({ recentTracks }) {
       </div>
       <p className="track-name">Nothing is currently playing</p>
       <p className="muted small">Checking automatically — or start a track on Spotify now.</p>
+
+      {/* No track loaded means device state is unknown until an action is
+          attempted — hasActiveDevice stays undefined so the buttons are
+          enabled and a real 404 (not a guess) drives the "no device" message. */}
+      <PlaybackControls isPlaying={false} hasActiveDevice={undefined} onChanged={onChanged} />
 
       <MiniTrackStrip title="Played recently" tracks={recentTracks} />
     </div>
@@ -109,7 +115,9 @@ export default function NowPlaying() {
       {loading && <SectionLoading count={1} />}
       {!loading && error && <SectionError message={error} onRetry={refresh} />}
 
-      {!loading && !error && !data?.item && <EmptyNowPlaying recentTracks={recentTracks} />}
+      {!loading && !error && !data?.item && (
+        <EmptyNowPlaying recentTracks={recentTracks} onChanged={refresh} />
+      )}
 
       {!loading && !error && data?.item && (
         <div className="now-playing-stage">
@@ -154,6 +162,12 @@ export default function NowPlaying() {
                 </span>
                 {!data.is_playing && ' · Paused'}
               </p>
+
+              <PlaybackControls
+                isPlaying={Boolean(data.is_playing)}
+                hasActiveDevice={data.device != null}
+                onChanged={refresh}
+              />
             </div>
           </div>
 
