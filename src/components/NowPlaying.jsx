@@ -1,5 +1,7 @@
-import { getCurrentlyPlaying, getRecentlyPlayed } from '../api/spotifyData.js'
+import { useEffect, useState } from 'react'
+import { getCurrentlyPlaying, getRecentlyPlayed, getQueue } from '../api/spotifyData.js'
 import { useSpotifyData } from '../hooks/useSpotifyData.js'
+import { useNowPlayingPolling } from '../hooks/useNowPlayingPolling.js'
 import { useDominantColor } from '../hooks/useDominantColor.js'
 import { SectionLoading, SectionError, RefreshButton } from './SectionState.jsx'
 
@@ -8,6 +10,34 @@ function formatMs(ms) {
   const minutes = Math.floor(totalSeconds / 60)
   const seconds = totalSeconds % 60
   return `${minutes}:${String(seconds).padStart(2, '0')}`
+}
+
+function MiniTrackStrip({ title, tracks }) {
+  if (tracks.length === 0) return null
+  return (
+    <div className="recent-strip">
+      <p className="chart-title" style={{ margin: '0 0 0.6rem' }}>
+        {title}
+      </p>
+      <div className="recent-strip-items">
+        {tracks.map((track, index) => (
+          <div className="recent-strip-item" key={`${track.id ?? track.uri}-${index}`}>
+            {track.album?.images?.[track.album.images.length - 1]?.url && (
+              <img
+                src={track.album.images[track.album.images.length - 1].url}
+                alt={track.album.name}
+                className="recent-strip-art"
+              />
+            )}
+            <div className="recent-strip-info">
+              <p className="recent-strip-track">{track.name}</p>
+              <p className="muted small">{track.artists.map((a) => a.name).join(', ')}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 function EmptyNowPlaying({ recentTracks }) {
@@ -19,46 +49,52 @@ function EmptyNowPlaying({ recentTracks }) {
         <span />
       </div>
       <p className="track-name">Nothing is currently playing</p>
-      <p className="muted small">Start a track on Spotify, then hit refresh.</p>
+      <p className="muted small">Checking automatically — or start a track on Spotify now.</p>
 
-      {recentTracks.length > 0 && (
-        <div className="recent-strip">
-          <p className="chart-title" style={{ margin: '0 0 0.6rem' }}>
-            Played recently
-          </p>
-          <div className="recent-strip-items">
-            {recentTracks.map((item, index) => (
-              <div className="recent-strip-item" key={`${item.played_at}-${index}`}>
-                {item.track.album?.images?.[item.track.album.images.length - 1]?.url && (
-                  <img
-                    src={item.track.album.images[item.track.album.images.length - 1].url}
-                    alt={item.track.album.name}
-                    className="recent-strip-art"
-                  />
-                )}
-                <div className="recent-strip-info">
-                  <p className="recent-strip-track">{item.track.name}</p>
-                  <p className="muted small">{item.track.artists.map((a) => a.name).join(', ')}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <MiniTrackStrip title="Played recently" tracks={recentTracks} />
     </div>
   )
 }
 
 export default function NowPlaying() {
-  const { data, loading, error, refreshing, refresh } = useSpotifyData(getCurrentlyPlaying, [])
+  const { data, loading, error, refreshing, refresh } = useNowPlayingPolling(getCurrentlyPlaying, {
+    isActive: (result) => Boolean(result?.is_playing),
+  })
   const { data: recentData } = useSpotifyData(() => getRecentlyPlayed(4), [])
+
+  const currentTrackId = data?.item?.id ?? null
+  const [queue, setQueue] = useState([])
+
+  // Queue only needs to change when the current track changes, not on every
+  // 5-10s poll tick — refetching it that often would be excessive for data
+  // that's usually stable for the length of a song.
+  useEffect(() => {
+    if (!currentTrackId) {
+      setQueue([])
+      return
+    }
+    let cancelled = false
+    getQueue()
+      .then((result) => {
+        if (!cancelled) setQueue(result?.queue ?? [])
+      })
+      .catch(() => {
+        if (!cancelled) setQueue([])
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [currentTrackId])
 
   const artUrl = data?.item?.album?.images?.[0]?.url ?? null
   const dominantColor = useDominantColor(artUrl)
 
   const recentTracks = (recentData?.items ?? [])
-    .filter((item) => item.track.id !== data?.item?.id)
+    .filter((item) => item.track.id !== currentTrackId)
     .slice(0, 3)
+    .map((item) => item.track)
+
+  const upcomingTracks = queue.slice(0, 4)
 
   return (
     <section
@@ -121,32 +157,8 @@ export default function NowPlaying() {
             </div>
           </div>
 
-          {recentTracks.length > 0 && (
-            <div className="recent-strip">
-              <p className="chart-title" style={{ margin: '0 0 0.6rem' }}>
-                Played before this
-              </p>
-              <div className="recent-strip-items">
-                {recentTracks.map((item, index) => (
-                  <div className="recent-strip-item" key={`${item.played_at}-${index}`}>
-                    {item.track.album?.images?.[item.track.album.images.length - 1]?.url && (
-                      <img
-                        src={item.track.album.images[item.track.album.images.length - 1].url}
-                        alt={item.track.album.name}
-                        className="recent-strip-art"
-                      />
-                    )}
-                    <div className="recent-strip-info">
-                      <p className="recent-strip-track">{item.track.name}</p>
-                      <p className="muted small">
-                        {item.track.artists.map((a) => a.name).join(', ')}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <MiniTrackStrip title="Next up" tracks={upcomingTracks} />
+          <MiniTrackStrip title="Played before this" tracks={recentTracks} />
         </div>
       )}
     </section>

@@ -33,6 +33,12 @@ export function getCurrentlyPlaying() {
   return spotifyFetch('/me/player/currently-playing')
 }
 
+// Requires the user-read-playback-state scope. Returns the currently
+// playing item plus an array of upcoming queued tracks.
+export function getQueue() {
+  return spotifyFetch('/me/player/queue')
+}
+
 export function getRecentlyPlayed(limit = 50) {
   return spotifyFetch('/me/player/recently-played', { params: { limit } })
 }

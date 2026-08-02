@@ -7,5 +7,6 @@ export const SPOTIFY_SCOPES = [
   'user-read-recently-played',
   'user-top-read',
   'user-read-currently-playing',
+  'user-read-playback-state',
   'user-library-read',
 ].join(' ')
