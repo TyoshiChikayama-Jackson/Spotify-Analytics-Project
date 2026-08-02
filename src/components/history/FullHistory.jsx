@@ -10,6 +10,7 @@ import SkipRateChart from './SkipRateChart.jsx'
 import TopAllTime from './TopAllTime.jsx'
 import HabitsAndPatterns from './habits/HabitsAndPatterns.jsx'
 import ObsessionAndLoyalty from './loyalty/ObsessionAndLoyalty.jsx'
+import BigPicture from './bigpicture/BigPicture.jsx'
 
 export default function FullHistory() {
   const [entries, setEntries] = useState(null)
@@ -97,6 +98,7 @@ export default function FullHistory() {
 
           <HabitsAndPatterns entries={entries} />
           <ObsessionAndLoyalty entries={entries} />
+          <BigPicture entries={entries} />
         </>
       )}
     </div>
