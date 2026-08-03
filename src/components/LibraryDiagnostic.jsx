@@ -36,9 +36,12 @@ export default function LibraryDiagnostic() {
   }
 
   return (
-    <div className="panel" style={{ marginTop: '1rem' }}>
+    <div className="panel" style={{ marginTop: '1rem', position: 'relative', zIndex: 10 }}>
       <div className="panel-header">
         <h2>Library Diagnostic (temporary)</h2>
+        <button type="button" onClick={() => alert('button reached React')} style={{ marginRight: '0.5rem' }}>
+          Test click
+        </button>
         <button className="secondary" onClick={runChecks} disabled={running}>
           {running ? 'Running…' : 'Run checks'}
         </button>
