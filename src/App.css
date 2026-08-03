@@ -1704,6 +1704,67 @@ p.small {
 }
 
 /* ==========================================================================
+   Chronotype
+   ========================================================================== */
+
+.chronotype-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+
+.chronotype-label {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.chronotype-year-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.chronotype-year-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Mainstream score
+   ========================================================================== */
+
+.mainstream-progress {
+  margin-bottom: 1rem;
+}
+
+.mainstream-progress .progress-track {
+  height: 5px;
+  border-radius: 999px;
+  margin: 0 0 0.5rem;
+}
+
+.mainstream-progress .progress-fill {
+  border-radius: 999px;
+  transition: width 200ms ease;
+}
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 
@@ -1771,6 +1832,10 @@ p.small {
   .import-summary {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .chronotype-year-row {
+    flex-direction: column;
   }
 
   .section-switch {

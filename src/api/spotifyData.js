@@ -192,6 +192,14 @@ export async function addToQueue(trackUri) {
   })
 }
 
+// GET /v1/tracks — still available post the Nov 2024 deprecations. Accepts
+// up to 50 ids per request; returns full track objects including
+// popularity. A missing/unavailable track comes back as `null` at that
+// index rather than throwing, so callers should filter nulls.
+export function getTrackPopularityBatch(trackIds) {
+  return spotifyFetch('/tracks', { params: { ids: trackIds.join(',') } })
+}
+
 export function getRecentlyPlayed(limit = 50) {
   return spotifyFetch('/me/player/recently-played', { params: { limit } })
 }

@@ -12,6 +12,7 @@ import HabitsAndPatterns from './habits/HabitsAndPatterns.jsx'
 import ObsessionAndLoyalty from './loyalty/ObsessionAndLoyalty.jsx'
 import BigPicture from './bigpicture/BigPicture.jsx'
 import ListeningBehavior from './behavior/ListeningBehavior.jsx'
+import MoreInsights from './moreinsights/MoreInsights.jsx'
 
 const SUB_TABS = [
   { id: 'overview', label: 'Overview' },
@@ -19,6 +20,7 @@ const SUB_TABS = [
   { id: 'loyalty', label: 'Obsession & Loyalty' },
   { id: 'bigpicture', label: 'Bigger Picture' },
   { id: 'behavior', label: 'Listening Behavior' },
+  { id: 'moreinsights', label: 'More Insights' },
 ]
 
 function Overview({ entries }) {
@@ -132,6 +134,7 @@ export default function FullHistory() {
             {subTab === 'loyalty' && <ObsessionAndLoyalty entries={entries} />}
             {subTab === 'bigpicture' && <BigPicture entries={entries} />}
             {subTab === 'behavior' && <ListeningBehavior entries={entries} />}
+            {subTab === 'moreinsights' && <MoreInsights entries={entries} />}
           </div>
         </>
       )}
