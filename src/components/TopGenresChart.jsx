@@ -25,7 +25,16 @@ function buildGenreCounts(artists, topN = 10) {
 export default function TopGenresChart({ artists }) {
   const data = buildGenreCounts(artists)
 
-  if (data.length === 0) return null
+  if (data.length === 0) {
+    return (
+      <div className="chart-block">
+        <h3 className="chart-title">Top genres</h3>
+        <p className="section-state muted">
+          Spotify hasn't returned genre data for these artists yet.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="chart-block">
