@@ -179,10 +179,28 @@ export async function seekToPosition(positionMs) {
   })
 }
 
-// Requires user-library-modify (save/remove) and user-library-read (check).
+// GET /me/tracks/contains reliably 403s for this app/account even with a
+// verified real track ID and a bare-minimum request (confirmed by testing
+// it directly, bypassing all app code) — while GET /me/tracks itself works
+// fine under the same token. Rather than depend on the broken endpoint,
+// this pages through /me/tracks and checks membership directly, stopping
+// as soon as the track is found (or the page cap is hit) so a "not saved"
+// result doesn't require scanning the whole library on every track change.
+const IS_SAVED_SCAN_PAGE_LIMIT = 50
+const IS_SAVED_SCAN_MAX_PAGES = 10 // caps the scan at 500 most-recently-saved tracks
+
 export async function isTrackSaved(trackId) {
-  const result = await spotifyFetch('/me/tracks/contains', { params: { ids: trackId } })
-  return Boolean(result?.[0])
+  let offset = 0
+  for (let page = 0; page < IS_SAVED_SCAN_MAX_PAGES; page += 1) {
+    const result = await spotifyFetch('/me/tracks', {
+      params: { limit: IS_SAVED_SCAN_PAGE_LIMIT, offset },
+    })
+    const items = result?.items ?? []
+    if (items.some((item) => item.track?.id === trackId)) return true
+    if (items.length < IS_SAVED_SCAN_PAGE_LIMIT) return false // reached the end
+    offset += IS_SAVED_SCAN_PAGE_LIMIT
+  }
+  return false // gave up after the page cap without finding it
 }
 
 export function saveTrack(trackId) {
