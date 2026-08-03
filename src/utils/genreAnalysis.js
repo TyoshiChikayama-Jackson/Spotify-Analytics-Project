@@ -59,6 +59,7 @@ export async function resolveGenresForHistory(entries, { onProgress } = {}) {
   let idsDone = 0
   onProgress?.({ stage: 'resolving-artists', completed: 0, total: namesToResolve.length })
 
+  let debugLogged = 0
   const idResults = await runPool(
     namesToResolve,
     async (name) => {
@@ -66,7 +67,15 @@ export async function resolveGenresForHistory(entries, { onProgress } = {}) {
       try {
         const match = await searchArtistByName(name)
         artistId = match?.id ?? null
-      } catch {
+        if (debugLogged < 5) {
+          debugLogged += 1
+          console.log('[genre-debug] search result', { name, match, artistId })
+        }
+      } catch (err) {
+        if (debugLogged < 5) {
+          debugLogged += 1
+          console.error('[genre-debug] search FAILED', { name, status: err.status, message: err.message })
+        }
         artistId = null
       }
       return [name, artistId]

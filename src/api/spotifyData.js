@@ -24,6 +24,10 @@ async function spotifyFetch(path, { params, method = 'GET', body, retrying = fal
     body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 
+  if (path === '/search') {
+    console.log('[genre-debug] fetch', { url: url.toString(), status: response.status })
+  }
+
   if (response.status === 204) return null
 
   if (response.status === 401 && !retrying) {
