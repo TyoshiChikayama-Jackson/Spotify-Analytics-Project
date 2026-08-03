@@ -11,8 +11,12 @@ import RecentlyPlayed from './components/RecentlyPlayed.jsx'
 import TopTracks from './components/TopTracks.jsx'
 import TopArtists from './components/TopArtists.jsx'
 import Library from './components/Library.jsx'
-import FullHistory from './components/history/FullHistory.jsx'
-import MainHub from './components/MainHub.jsx'
+import HabitsAndPatternsPage from './components/history/HabitsAndPatternsPage.jsx'
+import ObsessionAndLoyaltyPage from './components/history/ObsessionAndLoyaltyPage.jsx'
+import BigPicturePage from './components/history/BigPicturePage.jsx'
+import MoreInsightsPage from './components/history/MoreInsightsPage.jsx'
+import GenreAnalysisPage from './components/history/GenreAnalysisPage.jsx'
+import Sidebar from './components/Sidebar.jsx'
 import './App.css'
 
 const SECTIONS = {
@@ -20,17 +24,22 @@ const SECTIONS = {
   'top-tracks': { label: 'Top Tracks', Component: TopTracks },
   'top-artists': { label: 'Top Artists', Component: TopArtists },
   library: { label: 'Library', Component: Library },
-  'full-history': { label: 'Full History', Component: FullHistory },
+  habits: { label: 'Habits & Patterns', Component: HabitsAndPatternsPage },
+  loyalty: { label: 'Obsession & Loyalty', Component: ObsessionAndLoyaltyPage },
+  bigpicture: { label: 'Big Picture', Component: BigPicturePage },
+  moreinsights: { label: 'More Insights', Component: MoreInsightsPage },
+  genre: { label: 'Genre Analysis', Component: GenreAnalysisPage },
 }
+
+const DEFAULT_SECTION_ID = 'recently-played'
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  // null = at the hub; otherwise the id of the section currently open.
-  const [activeSectionId, setActiveSectionId] = useState(null)
-  // Bumped whenever the visible view changes so the panel wrapper remounts
+  const [activeSectionId, setActiveSectionId] = useState(DEFAULT_SECTION_ID)
+  // Bumped whenever the visible section changes so the panel wrapper remounts
   // and its entrance animation replays instead of a jarring instant swap.
   const [panelKey, setPanelKey] = useState(0)
 
@@ -67,11 +76,6 @@ function App() {
     setPanelKey((key) => key + 1)
   }
 
-  function goToHub() {
-    setActiveSectionId(null)
-    setPanelKey((key) => key + 1)
-  }
-
   if (loading) {
     return (
       <div className="container centered">
@@ -91,45 +95,39 @@ function App() {
     )
   }
 
-  const activeSection = activeSectionId ? SECTIONS[activeSectionId] : null
-  const ActiveComponent = activeSection?.Component
+  const activeSection = SECTIONS[activeSectionId] ?? SECTIONS[DEFAULT_SECTION_ID]
+  const ActiveComponent = activeSection.Component
 
   return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <h1>Listening Dashboard</h1>
-        {profile && (
-          <div className="profile">
-            {profile.images?.[0]?.url && (
-              <img src={profile.images[0].url} alt={profile.display_name} className="avatar" />
-            )}
-            <span className="profile-name">{profile.display_name}</span>
-            <button className="secondary" onClick={handleLogout}>
-              Log out
-            </button>
-          </div>
-        )}
-      </header>
+    <div className="app-shell">
+      <Sidebar activeSectionId={activeSectionId} onSelect={openSection} />
 
-      {error && <p className="error">{error}</p>}
+      <div className="dashboard">
+        <header className="dashboard-header">
+          <h1>Listening Dashboard</h1>
+          {profile && (
+            <div className="profile">
+              {profile.images?.[0]?.url && (
+                <img src={profile.images[0].url} alt={profile.display_name} className="avatar" />
+              )}
+              <span className="profile-name">{profile.display_name}</span>
+              <button className="secondary" onClick={handleLogout}>
+                Log out
+              </button>
+            </div>
+          )}
+        </header>
 
-      {/* Now Playing is pinned outside the hub/section navigation entirely —
-          it's always visible regardless of which section is open. */}
-      <NowPlaying />
+        {error && <p className="error">{error}</p>}
 
-      {activeSection && (
-        <div className="hub-breadcrumb">
-          <button type="button" className="hub-breadcrumb-link" onClick={goToHub}>
-            Home
-          </button>
-          <span className="hub-breadcrumb-sep">/</span>
-          <span className="hub-breadcrumb-current">{activeSection.label}</span>
-        </div>
-      )}
+        {/* Now Playing is pinned outside the section navigation entirely —
+            it's always visible regardless of which sidebar item is active. */}
+        <NowPlaying />
 
-      <main key={panelKey} className="tab-panel">
-        {activeSection ? <ActiveComponent /> : <MainHub onSelect={openSection} />}
-      </main>
+        <main key={panelKey} className="tab-panel">
+          <ActiveComponent />
+        </main>
+      </div>
     </div>
   )
 }
