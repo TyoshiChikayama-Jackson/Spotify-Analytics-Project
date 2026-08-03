@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { detectOnRepeatPeriods } from '../../../utils/loyaltyStats.js'
 import OnRepeatFilters from './OnRepeatFilters.jsx'
+import AddToQueueButton from '../../AddToQueueButton.jsx'
 
 const PAGE_SIZE = 20
 const DEFAULT_MIN_PLAYS = 10
@@ -108,6 +109,7 @@ export default function OnRepeatTimeline({ entries }) {
                       <br />
                       {formatDate(period.startTimestamp)} – {formatDate(period.endTimestamp)}
                     </span>
+                    <AddToQueueButton trackUri={period.trackUri} trackName={period.trackName} />
                   </li>
                 ))}
               </ol>

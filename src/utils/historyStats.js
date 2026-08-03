@@ -46,6 +46,8 @@ export function topByMsPlayed(entries, { by, limit = 20 }) {
       groups.set(key, {
         name: by === 'artist' ? entry.artistName : entry.trackName,
         artistName: entry.artistName,
+        // Only meaningful in track mode — an artist has no single URI.
+        trackUri: by === 'artist' ? null : entry.trackUri,
         msPlayed: entry.msPlayed,
         playCount: 1,
       })

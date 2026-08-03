@@ -3,6 +3,7 @@ import { getTopTracks } from '../api/spotifyData.js'
 import { useSpotifyData } from '../hooks/useSpotifyData.js'
 import { SectionLoading, SectionError, SectionEmpty, RefreshButton } from './SectionState.jsx'
 import TimeRangeToggle from './TimeRangeToggle.jsx'
+import AddToQueueButton from './AddToQueueButton.jsx'
 
 export default function TopTracks() {
   const [timeRange, setTimeRange] = useState('medium_term')
@@ -44,6 +45,7 @@ export default function TopTracks() {
                 <p className="track-name">{track.name}</p>
                 <p className="muted small">{track.artists.map((a) => a.name).join(', ')}</p>
               </div>
+              <AddToQueueButton trackUri={track.uri} trackName={track.name} />
             </li>
           ))}
         </ol>

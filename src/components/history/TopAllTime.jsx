@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { topByMsPlayed, msToHours } from '../../utils/historyStats.js'
+import AddToQueueButton from '../AddToQueueButton.jsx'
 
 export default function TopAllTime({ entries }) {
   const [mode, setMode] = useState('tracks')
@@ -43,6 +44,9 @@ export default function TopAllTime({ entries }) {
                   {Math.round(msToHours(item.msPlayed) * 10) / 10} hrs · {item.playCount} plays
                 </p>
               </div>
+              {mode === 'tracks' && (
+                <AddToQueueButton trackUri={item.trackUri} trackName={item.name} />
+              )}
             </li>
           ))}
         </ol>

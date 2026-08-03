@@ -179,6 +179,19 @@ export async function seekToPosition(positionMs) {
   })
 }
 
+// Adds a track to the end of the active device's playback queue. Same
+// no-active-device (404) failure mode as the other player controls.
+export async function addToQueue(trackUri) {
+  const deviceId = await resolveActiveDeviceId()
+  return spotifyFetch('/me/player/queue', {
+    method: 'POST',
+    params: {
+      uri: trackUri,
+      ...(deviceId ? { device_id: deviceId } : {}),
+    },
+  })
+}
+
 export function getRecentlyPlayed(limit = 50) {
   return spotifyFetch('/me/player/recently-played', { params: { limit } })
 }

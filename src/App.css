@@ -1075,6 +1075,80 @@ p.small {
 }
 
 /* ==========================================================================
+   Add to queue
+   ========================================================================== */
+
+.add-to-queue-wrap {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+}
+
+.add-to-queue-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border-strong);
+  flex-shrink: 0;
+  opacity: 1;
+  transition: opacity 120ms ease, background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.add-to-queue-btn:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.add-to-queue-btn.is-done {
+  color: var(--good);
+  border-color: var(--good);
+}
+
+.add-to-queue-btn.is-error {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.add-to-queue-error {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 5;
+  width: max-content;
+  max-width: 220px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.6rem;
+  font-size: 0.7rem;
+  color: var(--error);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover-reveal only on devices with true hover (desktop/mouse) — always
+   visible on touch, where hover has no meaning and hiding it would make
+   the control undiscoverable. */
+@media (hover: hover) {
+  .add-to-queue-btn {
+    opacity: 0;
+  }
+
+  .ranked-item:hover .add-to-queue-btn,
+  .add-to-queue-btn:focus-visible,
+  .add-to-queue-btn.is-done,
+  .add-to-queue-btn.is-error {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
    Stat tiles
    ========================================================================== */
 
