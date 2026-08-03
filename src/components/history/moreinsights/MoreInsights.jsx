@@ -5,15 +5,19 @@ import MilestoneFacts from './MilestoneFacts.jsx'
 
 export default function MoreInsights({ entries }) {
   return (
-    <section className="panel">
-      <div className="panel-header">
-        <h2>More Insights</h2>
+    <div className="card-grid">
+      <div className="panel grid-card grid-card-full">
+        <MilestoneFacts entries={entries} />
       </div>
-
-      <MilestoneFacts entries={entries} />
-      <ChronotypeLabel entries={entries} />
-      <WeekdayWeekendSplit entries={entries} />
-      <ComebackTracks entries={entries} />
-    </section>
+      <div className="panel grid-card grid-card-md">
+        <ChronotypeLabel entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-lg">
+        <ComebackTracks entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-full">
+        <WeekdayWeekendSplit entries={entries} />
+      </div>
+    </div>
   )
 }

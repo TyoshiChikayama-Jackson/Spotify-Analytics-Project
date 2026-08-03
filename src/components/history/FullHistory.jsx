@@ -13,27 +13,28 @@ import ObsessionAndLoyalty from './loyalty/ObsessionAndLoyalty.jsx'
 import BigPicture from './bigpicture/BigPicture.jsx'
 import ListeningBehavior from './behavior/ListeningBehavior.jsx'
 import MoreInsights from './moreinsights/MoreInsights.jsx'
+import FullHistoryHub from './FullHistoryHub.jsx'
 
-const SUB_TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'habits', label: 'Habits & Patterns' },
-  { id: 'loyalty', label: 'Obsession & Loyalty' },
-  { id: 'bigpicture', label: 'Bigger Picture' },
-  { id: 'behavior', label: 'Listening Behavior' },
-  { id: 'moreinsights', label: 'More Insights' },
-]
+const SECTION_LABELS = {
+  overview: 'Overview',
+  habits: 'Habits & Patterns',
+  loyalty: 'Obsession & Loyalty',
+  bigpicture: 'Bigger Picture',
+  behavior: 'Listening Behavior',
+  moreinsights: 'More Insights',
+}
 
 function Overview({ entries }) {
   return (
-    <>
-      <section className="panel">
+    <div className="card-grid">
+      <section className="panel grid-card grid-card-md">
         <div className="panel-header">
           <h2>Highlights</h2>
         </div>
         <HistoryHighlights entries={entries} />
       </section>
 
-      <section className="panel">
+      <section className="panel grid-card grid-card-full">
         <div className="panel-header">
           <h2>Listening over time</h2>
         </div>
@@ -44,20 +45,20 @@ function Overview({ entries }) {
         <SkipRateChart entries={entries} />
       </section>
 
-      <section className="panel">
+      <section className="panel grid-card grid-card-full">
         <div className="panel-header">
           <h2>When you listen</h2>
         </div>
         <ListeningHeatmap entries={entries} />
       </section>
 
-      <section className="panel">
+      <section className="panel grid-card grid-card-full">
         <div className="panel-header">
           <h2>All-time favorites</h2>
         </div>
         <TopAllTime entries={entries} />
       </section>
-    </>
+    </div>
   )
 }
 
@@ -66,7 +67,8 @@ export default function FullHistory() {
   const [summary, setSummary] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [subTab, setSubTab] = useState(SUB_TABS[0].id)
+  // null = at the Full History hub; otherwise the id of the open sub-section.
+  const [activeSubSection, setActiveSubSection] = useState(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -114,27 +116,28 @@ export default function FullHistory() {
 
       {hasData && (
         <>
-          <nav className="tab-nav" role="tablist" aria-label="Full History sections">
-            {SUB_TABS.map((tab) => (
+          {activeSubSection && (
+            <div className="hub-breadcrumb">
               <button
-                key={tab.id}
-                role="tab"
-                aria-selected={subTab === tab.id}
-                className={`tab-nav-item ${subTab === tab.id ? 'active' : ''}`}
-                onClick={() => setSubTab(tab.id)}
+                type="button"
+                className="hub-breadcrumb-link"
+                onClick={() => setActiveSubSection(null)}
               >
-                {tab.label}
+                Full History
               </button>
-            ))}
-          </nav>
+              <span className="hub-breadcrumb-sep">/</span>
+              <span className="hub-breadcrumb-current">{SECTION_LABELS[activeSubSection]}</span>
+            </div>
+          )}
 
-          <div key={subTab} className="tab-panel">
-            {subTab === 'overview' && <Overview entries={entries} />}
-            {subTab === 'habits' && <HabitsAndPatterns entries={entries} />}
-            {subTab === 'loyalty' && <ObsessionAndLoyalty entries={entries} />}
-            {subTab === 'bigpicture' && <BigPicture entries={entries} />}
-            {subTab === 'behavior' && <ListeningBehavior entries={entries} />}
-            {subTab === 'moreinsights' && <MoreInsights entries={entries} />}
+          <div key={activeSubSection ?? 'hub'} className="tab-panel">
+            {!activeSubSection && <FullHistoryHub onSelect={setActiveSubSection} />}
+            {activeSubSection === 'overview' && <Overview entries={entries} />}
+            {activeSubSection === 'habits' && <HabitsAndPatterns entries={entries} />}
+            {activeSubSection === 'loyalty' && <ObsessionAndLoyalty entries={entries} />}
+            {activeSubSection === 'bigpicture' && <BigPicture entries={entries} />}
+            {activeSubSection === 'behavior' && <ListeningBehavior entries={entries} />}
+            {activeSubSection === 'moreinsights' && <MoreInsights entries={entries} />}
           </div>
         </>
       )}

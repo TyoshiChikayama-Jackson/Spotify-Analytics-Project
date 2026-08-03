@@ -34,30 +34,34 @@ export default function RecentlyPlayed() {
       )}
 
       {!loading && !error && items.length > 0 && (
-        <>
-          <RecentlyPlayedChart items={items} />
-
-          <div className="data-table-scroll">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Track</th>
-                  <th>Artist</th>
-                  <th>Played at</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item, index) => (
-                  <tr key={`${item.played_at}-${index}`} style={{ '--i': index }}>
-                    <td>{item.track.name}</td>
-                    <td>{item.track.artists.map((a) => a.name).join(', ')}</td>
-                    <td className="muted">{formatPlayedAt(item.played_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="card-grid">
+          <div className="panel grid-card grid-card-full">
+            <RecentlyPlayedChart items={items} />
           </div>
-        </>
+
+          <div className="panel grid-card grid-card-full">
+            <div className="data-table-scroll">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Track</th>
+                    <th>Artist</th>
+                    <th>Played at</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item, index) => (
+                    <tr key={`${item.played_at}-${index}`} style={{ '--i': index }}>
+                      <td>{item.track.name}</td>
+                      <td>{item.track.artists.map((a) => a.name).join(', ')}</td>
+                      <td className="muted">{formatPlayedAt(item.played_at)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   )

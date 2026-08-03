@@ -36,7 +36,7 @@ export default function TopTracks() {
               <span className="rank">{index + 1}</span>
               {track.album?.images?.[track.album.images.length - 1]?.url && (
                 <img
-                  className="album-art-sm"
+                  className="list-art-lg"
                   src={track.album.images[track.album.images.length - 1].url}
                   alt={track.album.name}
                 />

@@ -1827,4 +1827,193 @@ p.small {
     flex: 1;
     justify-content: center;
   }
+
+  .hub-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-grid .grid-card {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .hub-breadcrumb {
+    flex-wrap: wrap;
+  }
+
+  .list-art-lg {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* ==========================================================================
+   Hub navigation
+   ========================================================================== */
+
+.hub-intro {
+  margin: 0 0 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.hub-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--surface-1);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-weight: normal;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+  animation: panel-in 320ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.hub-card:hover {
+  border-color: var(--accent);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+}
+
+.hub-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.hub-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.hub-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.hub-card-description {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.hub-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.82rem;
+}
+
+.hub-breadcrumb-link {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.25rem 0.4rem;
+  margin: -0.25rem -0.4rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+.hub-breadcrumb-link:hover {
+  color: var(--accent);
+  background: var(--surface-2);
+}
+
+.hub-breadcrumb-current {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.hub-breadcrumb-sep {
+  color: var(--muted);
+}
+
+/* ==========================================================================
+   Card grid — masonry-style layout for stats/charts within a section.
+   Size variants control how many grid tracks a card spans; the grid itself
+   auto-flows so cards wrap naturally regardless of variant mix.
+   ========================================================================== */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.card-grid .grid-card {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.grid-card-sm {
+  grid-column: span 4;
+}
+
+.grid-card-md {
+  grid-column: span 6;
+}
+
+.grid-card-lg {
+  grid-column: span 8;
+}
+
+.grid-card-full {
+  grid-column: span 12;
+}
+
+@media (max-width: 900px) {
+  .grid-card-sm,
+  .grid-card-md,
+  .grid-card-lg,
+  .grid-card-full {
+    grid-column: span 12;
+  }
+}
+
+/* ==========================================================================
+   Larger album art in list views (not Now Playing)
+   ========================================================================== */
+
+.list-art-lg {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.list-art-lg.round {
+  border-radius: 50%;
 }

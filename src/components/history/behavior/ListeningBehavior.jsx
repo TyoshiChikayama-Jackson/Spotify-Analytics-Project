@@ -8,18 +8,28 @@ import MostImproved from './MostImproved.jsx'
 
 export default function ListeningBehavior({ entries }) {
   return (
-    <section className="panel">
-      <div className="panel-header">
-        <h2>Listening Behavior</h2>
+    <div className="card-grid">
+      <div className="panel grid-card grid-card-md">
+        <AutoplayRatio entries={entries} />
       </div>
-
-      <AutoplayRatio entries={entries} />
-      <InstantReplays entries={entries} />
-      <BackButtonUsage entries={entries} />
-      <DiversityScore entries={entries} />
-      <AlbumLoyalty entries={entries} />
-      <GrowthCurves entries={entries} />
-      <MostImproved entries={entries} />
-    </section>
+      <div className="panel grid-card grid-card-md">
+        <DiversityScore entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-lg">
+        <InstantReplays entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-sm">
+        <MostImproved entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-md">
+        <BackButtonUsage entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-lg">
+        <AlbumLoyalty entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-full">
+        <GrowthCurves entries={entries} />
+      </div>
+    </div>
   )
 }

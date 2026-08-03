@@ -6,16 +6,22 @@ import PlatformBreakdown from './PlatformBreakdown.jsx'
 
 export default function HabitsAndPatterns({ entries }) {
   return (
-    <section className="panel">
-      <div className="panel-header">
-        <h2>Habits &amp; Patterns</h2>
+    <div className="card-grid">
+      <div className="panel grid-card grid-card-md">
+        <StreakStats entries={entries} />
       </div>
-
-      <StreakStats entries={entries} />
-      <SessionStats entries={entries} />
-      <DiscoveryChart entries={entries} />
-      <ShuffleRatioChart entries={entries} />
-      <PlatformBreakdown entries={entries} />
-    </section>
+      <div className="panel grid-card grid-card-lg">
+        <SessionStats entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-full">
+        <DiscoveryChart entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-md">
+        <ShuffleRatioChart entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-full">
+        <PlatformBreakdown entries={entries} />
+      </div>
+    </div>
   )
 }

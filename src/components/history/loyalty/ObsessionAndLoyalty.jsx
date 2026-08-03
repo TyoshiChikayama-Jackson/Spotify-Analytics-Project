@@ -4,14 +4,16 @@ import SkipPatternsByArtist from './SkipPatternsByArtist.jsx'
 
 export default function ObsessionAndLoyalty({ entries }) {
   return (
-    <section className="panel">
-      <div className="panel-header">
-        <h2>Obsession &amp; Loyalty</h2>
+    <div className="card-grid">
+      <div className="panel grid-card grid-card-full">
+        <OnRepeatTimeline entries={entries} />
       </div>
-
-      <OnRepeatTimeline entries={entries} />
-      <ArtistRiseFallChart entries={entries} />
-      <SkipPatternsByArtist entries={entries} />
-    </section>
+      <div className="panel grid-card grid-card-full">
+        <ArtistRiseFallChart entries={entries} />
+      </div>
+      <div className="panel grid-card grid-card-full">
+        <SkipPatternsByArtist entries={entries} />
+      </div>
+    </div>
   )
 }

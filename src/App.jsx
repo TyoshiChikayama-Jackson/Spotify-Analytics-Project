@@ -12,25 +12,26 @@ import TopTracks from './components/TopTracks.jsx'
 import TopArtists from './components/TopArtists.jsx'
 import Library from './components/Library.jsx'
 import FullHistory from './components/history/FullHistory.jsx'
+import MainHub from './components/MainHub.jsx'
 import './App.css'
 
-const LIVE_TABS = [
-  { id: 'now-playing', label: 'Now Playing', Component: NowPlaying },
-  { id: 'recently-played', label: 'Recently Played', Component: RecentlyPlayed },
-  { id: 'top-tracks', label: 'Top Tracks', Component: TopTracks },
-  { id: 'top-artists', label: 'Top Artists', Component: TopArtists },
-  { id: 'library', label: 'Library', Component: Library },
-]
+const SECTIONS = {
+  'recently-played': { label: 'Recently Played', Component: RecentlyPlayed },
+  'top-tracks': { label: 'Top Tracks', Component: TopTracks },
+  'top-artists': { label: 'Top Artists', Component: TopArtists },
+  library: { label: 'Library', Component: Library },
+  'full-history': { label: 'Full History', Component: FullHistory },
+}
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [activeSection, setActiveSection] = useState('live')
-  const [activeLiveTab, setActiveLiveTab] = useState(LIVE_TABS[0].id)
-  // Bumped on every tab switch so the panel wrapper remounts and its
-  // entrance animation replays instead of a jarring instant swap.
+  // null = at the hub; otherwise the id of the section currently open.
+  const [activeSectionId, setActiveSectionId] = useState(null)
+  // Bumped whenever the visible view changes so the panel wrapper remounts
+  // and its entrance animation replays instead of a jarring instant swap.
   const [panelKey, setPanelKey] = useState(0)
 
   useEffect(() => {
@@ -61,13 +62,13 @@ function App() {
     setProfile(null)
   }
 
-  function handleSectionChange(section) {
-    setActiveSection(section)
+  function openSection(id) {
+    setActiveSectionId(id)
     setPanelKey((key) => key + 1)
   }
 
-  function handleLiveTabChange(id) {
-    setActiveLiveTab(id)
+  function goToHub() {
+    setActiveSectionId(null)
     setPanelKey((key) => key + 1)
   }
 
@@ -90,7 +91,8 @@ function App() {
     )
   }
 
-  const ActiveLiveComponent = LIVE_TABS.find((tab) => tab.id === activeLiveTab).Component
+  const activeSection = activeSectionId ? SECTIONS[activeSectionId] : null
+  const ActiveComponent = activeSection?.Component
 
   return (
     <div className="dashboard">
@@ -111,47 +113,22 @@ function App() {
 
       {error && <p className="error">{error}</p>}
 
-      <div className="section-switch" role="tablist" aria-label="Data source">
-        <button
-          role="tab"
-          data-section="live"
-          aria-selected={activeSection === 'live'}
-          className={`section-switch-item ${activeSection === 'live' ? 'active' : ''}`}
-          onClick={() => handleSectionChange('live')}
-        >
-          <span className="section-switch-dot" />
-          Live
-        </button>
-        <button
-          role="tab"
-          data-section="history"
-          aria-selected={activeSection === 'history'}
-          className={`section-switch-item ${activeSection === 'history' ? 'active' : ''}`}
-          onClick={() => handleSectionChange('history')}
-        >
-          <span className="section-switch-dot" />
-          Full History
-        </button>
-      </div>
+      {/* Now Playing is pinned outside the hub/section navigation entirely —
+          it's always visible regardless of which section is open. */}
+      <NowPlaying />
 
-      {activeSection === 'live' && (
-        <nav className="tab-nav" role="tablist" aria-label="Live data sections">
-          {LIVE_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              role="tab"
-              aria-selected={activeLiveTab === tab.id}
-              className={`tab-nav-item ${activeLiveTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleLiveTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+      {activeSection && (
+        <div className="hub-breadcrumb">
+          <button type="button" className="hub-breadcrumb-link" onClick={goToHub}>
+            Home
+          </button>
+          <span className="hub-breadcrumb-sep">/</span>
+          <span className="hub-breadcrumb-current">{activeSection.label}</span>
+        </div>
       )}
 
       <main key={panelKey} className="tab-panel">
-        {activeSection === 'live' ? <ActiveLiveComponent /> : <FullHistory />}
+        {activeSection ? <ActiveComponent /> : <MainHub onSelect={openSection} />}
       </main>
     </div>
   )
