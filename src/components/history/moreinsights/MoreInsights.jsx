@@ -1,5 +1,4 @@
 import WeekdayWeekendSplit from './WeekdayWeekendSplit.jsx'
-import MainstreamScore from './MainstreamScore.jsx'
 import ComebackTracks from './ComebackTracks.jsx'
 import ChronotypeLabel from './ChronotypeLabel.jsx'
 import MilestoneFacts from './MilestoneFacts.jsx'
@@ -15,7 +14,6 @@ export default function MoreInsights({ entries }) {
       <ChronotypeLabel entries={entries} />
       <WeekdayWeekendSplit entries={entries} />
       <ComebackTracks entries={entries} />
-      <MainstreamScore entries={entries} />
     </section>
   )
 }
