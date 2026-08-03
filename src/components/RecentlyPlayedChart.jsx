@@ -7,6 +7,8 @@ import {
   tooltipContentStyle,
   tooltipLabelStyle,
   chartAnimation,
+  xAxisAngledProps,
+  chartMarginAngled,
 } from './chartTheme.js'
 
 const HOUR_LABELS = Array.from({ length: 24 }, (_, hour) => {
@@ -39,15 +41,16 @@ function ActivityChart({ title, data }) {
   return (
     <div className="chart-block">
       <h3 className="chart-title">{title}</h3>
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+      <ResponsiveContainer width="100%" height={220}>
+        <BarChart data={data} margin={chartMarginAngled}>
           <CartesianGrid vertical={false} stroke={gridStroke} />
           <XAxis
             dataKey="label"
             tick={axisTick}
             axisLine={axisLine}
             tickLine={false}
-            interval={title.includes('Hour') ? 2 : 0}
+            interval={title.includes('Hour') ? 1 : 0}
+            {...xAxisAngledProps}
           />
           <YAxis allowDecimals={false} tick={axisTick} axisLine={false} tickLine={false} width={28} />
           <Tooltip

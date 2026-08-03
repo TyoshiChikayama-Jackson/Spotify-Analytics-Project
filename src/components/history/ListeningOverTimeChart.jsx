@@ -7,6 +7,8 @@ import {
   tooltipContentStyle,
   tooltipLabelStyle,
   chartAnimation,
+  xAxisAngledProps,
+  chartMarginAngled,
 } from '../chartTheme.js'
 
 function formatMonthLabel(month) {
@@ -28,8 +30,8 @@ export default function ListeningOverTimeChart({ entries }) {
   return (
     <div className="chart-block">
       <h3 className="chart-title">Listening activity over time</h3>
-      <ResponsiveContainer width="100%" height={240}>
-        <AreaChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+      <ResponsiveContainer width="100%" height={260}>
+        <AreaChart data={data} margin={chartMarginAngled}>
           <defs>
             <linearGradient id="listeningVolumeFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--series-1)" stopOpacity={0.35} />
@@ -43,6 +45,7 @@ export default function ListeningOverTimeChart({ entries }) {
             axisLine={axisLine}
             tickLine={false}
             interval={tickInterval}
+            {...xAxisAngledProps}
           />
           <YAxis tick={axisTick} axisLine={false} tickLine={false} width={36} />
           <Tooltip

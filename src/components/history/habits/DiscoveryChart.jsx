@@ -13,6 +13,8 @@ import {
   tooltipContentStyle,
   tooltipLabelStyle,
   chartAnimation,
+  xAxisAngledProps,
+  chartMarginAngled,
 } from '../../chartTheme.js'
 
 function formatMonthLabel(month) {
@@ -73,8 +75,8 @@ export default function DiscoveryChart({ entries }) {
         </p>
       )}
 
-      <ResponsiveContainer width="100%" height={240}>
-        <BarChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+      <ResponsiveContainer width="100%" height={260}>
+        <BarChart data={data} margin={chartMarginAngled}>
           <CartesianGrid vertical={false} stroke={gridStroke} />
           <XAxis
             dataKey="label"
@@ -82,6 +84,7 @@ export default function DiscoveryChart({ entries }) {
             axisLine={axisLine}
             tickLine={false}
             interval={tickInterval}
+            {...xAxisAngledProps}
           />
           <YAxis allowDecimals={false} tick={axisTick} axisLine={false} tickLine={false} width={32} />
           <Tooltip

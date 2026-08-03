@@ -5,7 +5,17 @@ import {
   instantReplaysByMonth,
   topInstantReplayTracks,
 } from '../../../utils/behaviorStats.js'
-import { axisTick, axisLine, gridStroke, tooltipCursor, tooltipContentStyle, tooltipLabelStyle, chartAnimation } from '../../chartTheme.js'
+import {
+  axisTick,
+  axisLine,
+  gridStroke,
+  tooltipCursor,
+  tooltipContentStyle,
+  tooltipLabelStyle,
+  chartAnimation,
+  xAxisAngledProps,
+  chartMarginAngled,
+} from '../../chartTheme.js'
 
 function formatMonthLabel(month) {
   const [year, monthNum] = month.split('-')
@@ -43,10 +53,17 @@ export default function InstantReplays({ entries }) {
         <strong>{events.length.toLocaleString()}</strong> total.
       </p>
 
-      <ResponsiveContainer width="100%" height={180}>
-        <BarChart data={monthly} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+      <ResponsiveContainer width="100%" height={220}>
+        <BarChart data={monthly} margin={chartMarginAngled}>
           <CartesianGrid vertical={false} stroke={gridStroke} />
-          <XAxis dataKey="label" tick={axisTick} axisLine={axisLine} tickLine={false} interval={tickInterval} />
+          <XAxis
+            dataKey="label"
+            tick={axisTick}
+            axisLine={axisLine}
+            tickLine={false}
+            interval={tickInterval}
+            {...xAxisAngledProps}
+          />
           <YAxis allowDecimals={false} tick={axisTick} axisLine={false} tickLine={false} width={28} />
           <Tooltip
             cursor={tooltipCursor}

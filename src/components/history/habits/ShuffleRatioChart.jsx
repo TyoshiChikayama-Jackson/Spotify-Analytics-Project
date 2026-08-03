@@ -7,6 +7,8 @@ import {
   tooltipContentStyle,
   tooltipLabelStyle,
   chartAnimation,
+  xAxisAngledProps,
+  chartMarginAngled,
 } from '../../chartTheme.js'
 
 function formatMonthLabel(month) {
@@ -27,8 +29,8 @@ export default function ShuffleRatioChart({ entries }) {
   return (
     <div className="chart-block">
       <h3 className="chart-title">Shuffle vs. deliberate listening</h3>
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+      <ResponsiveContainer width="100%" height={240}>
+        <LineChart data={data} margin={chartMarginAngled}>
           <CartesianGrid vertical={false} stroke={gridStroke} />
           <XAxis
             dataKey="label"
@@ -36,6 +38,7 @@ export default function ShuffleRatioChart({ entries }) {
             axisLine={axisLine}
             tickLine={false}
             interval={tickInterval}
+            {...xAxisAngledProps}
           />
           <YAxis tick={axisTick} axisLine={false} tickLine={false} width={36} unit="%" domain={[0, 100]} />
           <Tooltip

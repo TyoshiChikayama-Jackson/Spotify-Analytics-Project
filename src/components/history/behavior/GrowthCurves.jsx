@@ -1,6 +1,15 @@
 import { Legend, Line, LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { cumulativeGrowthByMonth } from '../../../utils/behaviorStats.js'
-import { axisTick, axisLine, gridStroke, tooltipContentStyle, tooltipLabelStyle, chartAnimation } from '../../chartTheme.js'
+import {
+  axisTick,
+  axisLine,
+  gridStroke,
+  tooltipContentStyle,
+  tooltipLabelStyle,
+  chartAnimation,
+  xAxisAngledProps,
+  chartMarginAngled,
+} from '../../chartTheme.js'
 
 function formatMonthLabel(month) {
   const [year, monthNum] = month.split('-')
@@ -30,10 +39,17 @@ export default function GrowthCurves({ entries }) {
       <p className="muted small" style={{ marginBottom: '0.75rem' }}>
         Cumulative distinct tracks and artists ever played.
       </p>
-      <ResponsiveContainer width="100%" height={260}>
-        <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -8 }}>
+      <ResponsiveContainer width="100%" height={280}>
+        <LineChart data={data} margin={{ ...chartMarginAngled, left: -8 }}>
           <CartesianGrid vertical={false} stroke={gridStroke} />
-          <XAxis dataKey="label" tick={axisTick} axisLine={axisLine} tickLine={false} interval={tickInterval} />
+          <XAxis
+            dataKey="label"
+            tick={axisTick}
+            axisLine={axisLine}
+            tickLine={false}
+            interval={tickInterval}
+            {...xAxisAngledProps}
+          />
           <YAxis
             allowDecimals={false}
             tick={axisTick}

@@ -5,6 +5,22 @@ export const axisTick = { fill: 'var(--muted)', fontSize: 11, fontFamily: 'var(-
 
 export const axisLine = { stroke: 'var(--baseline)' }
 
+// For x-axes with many categories (months/years/labels) that would
+// otherwise overlap horizontally — spread onto <XAxis> alongside the usual
+// dataKey/tick/axisLine/tickLine props. Angling needs extra bottom margin
+// (see chartMarginAngled below) so rotated labels aren't clipped, and an
+// explicit axis `height` so Recharts reserves room for them.
+export const xAxisAngledProps = {
+  angle: -35,
+  textAnchor: 'end',
+  height: 48,
+}
+
+// Drop-in replacement for a chart's `margin` prop when its XAxis uses
+// xAxisAngledProps — same left/right/top as the common chart margin, but
+// enough bottom space for angled labels to render without being cut off.
+export const chartMarginAngled = { top: 4, right: 8, bottom: 24, left: -16 }
+
 export const gridStroke = 'var(--gridline)'
 
 export const tooltipCursor = { fill: 'var(--gridline)' }

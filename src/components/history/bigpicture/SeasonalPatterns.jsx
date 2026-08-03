@@ -9,6 +9,8 @@ import {
   tooltipContentStyle,
   tooltipLabelStyle,
   chartAnimation,
+  xAxisAngledProps,
+  chartMarginAngled,
 } from '../../chartTheme.js'
 
 const SEASONS = ['Winter', 'Spring', 'Summer', 'Fall']
@@ -25,10 +27,16 @@ export default function SeasonalPatterns({ entries }) {
       <h3 className="chart-title">Seasonal listening patterns</h3>
 
       <h4 className="chart-title">Average hours by month (all years)</h4>
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={monthlyAverages} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+      <ResponsiveContainer width="100%" height={220}>
+        <BarChart data={monthlyAverages} margin={chartMarginAngled}>
           <CartesianGrid vertical={false} stroke={gridStroke} />
-          <XAxis dataKey="month" tick={axisTick} axisLine={axisLine} tickLine={false} />
+          <XAxis
+            dataKey="month"
+            tick={axisTick}
+            axisLine={axisLine}
+            tickLine={false}
+            {...xAxisAngledProps}
+          />
           <YAxis tick={axisTick} axisLine={false} tickLine={false} width={32} />
           <Tooltip
             cursor={tooltipCursor}

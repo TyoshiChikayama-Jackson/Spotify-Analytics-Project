@@ -5,7 +5,16 @@ import {
   hasReliableBackButtonData,
   mostRewoundTracks,
 } from '../../../utils/behaviorStats.js'
-import { axisTick, axisLine, gridStroke, tooltipContentStyle, tooltipLabelStyle, chartAnimation } from '../../chartTheme.js'
+import {
+  axisTick,
+  axisLine,
+  gridStroke,
+  tooltipContentStyle,
+  tooltipLabelStyle,
+  chartAnimation,
+  xAxisAngledProps,
+  chartMarginAngled,
+} from '../../chartTheme.js'
 
 function formatMonthLabel(month) {
   const [year, monthNum] = month.split('-')
@@ -42,10 +51,17 @@ export default function BackButtonUsage({ entries }) {
         Share of plays started by pressing back to a previous track.
       </p>
 
-      <ResponsiveContainer width="100%" height={180}>
-        <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+      <ResponsiveContainer width="100%" height={220}>
+        <LineChart data={data} margin={chartMarginAngled}>
           <CartesianGrid vertical={false} stroke={gridStroke} />
-          <XAxis dataKey="label" tick={axisTick} axisLine={axisLine} tickLine={false} interval={tickInterval} />
+          <XAxis
+            dataKey="label"
+            tick={axisTick}
+            axisLine={axisLine}
+            tickLine={false}
+            interval={tickInterval}
+            {...xAxisAngledProps}
+          />
           <YAxis tick={axisTick} axisLine={false} tickLine={false} width={36} unit="%" />
           <Tooltip
             contentStyle={tooltipContentStyle}
