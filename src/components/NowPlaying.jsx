@@ -13,6 +13,7 @@ import { SectionLoading, SectionError, RefreshButton } from './SectionState.jsx'
 import PlaybackControls from './PlaybackControls.jsx'
 import SeekBar from './SeekBar.jsx'
 import SaveTrackButton from './SaveTrackButton.jsx'
+import LibraryDiagnostic from './LibraryDiagnostic.jsx'
 
 function MiniTrackStrip({ title, tracks, onChanged }) {
   const [pendingUri, setPendingUri] = useState(null)
@@ -242,6 +243,7 @@ export default function NowPlaying() {
           <MiniTrackStrip title="Played before this" tracks={recentTracks} onChanged={refresh} />
         </div>
       )}
+      <LibraryDiagnostic />
     </section>
   )
 }
