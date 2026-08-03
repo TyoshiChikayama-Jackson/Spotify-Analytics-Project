@@ -34,6 +34,13 @@ const ICONS = {
       <circle cx="10" cy="10" r="3.5" />
     </svg>
   ),
+  genre: (
+    <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="6.5" cy="14" r="3" />
+      <circle cx="15" cy="6" r="2.5" />
+      <path d="M9.3 12.5 12.7 8" />
+    </svg>
+  ),
 }
 
 const CARDS = [
@@ -43,6 +50,7 @@ const CARDS = [
   { id: 'bigpicture', title: 'Bigger Picture', description: 'Year in review, longest gaps, and seasonal patterns.', icon: ICONS.bigPicture },
   { id: 'behavior', title: 'Listening Behavior', description: 'Autoplay, instant replays, diversity, and library growth.', icon: ICONS.behavior },
   { id: 'moreinsights', title: 'More Insights', description: 'Weekday vs. weekend, comebacks, chronotype, and milestones.', icon: ICONS.moreInsights },
+  { id: 'genre', title: 'Genre Analysis', description: 'Top genres over time and how often you switch between them.', icon: ICONS.genre },
 ]
 
 export default function FullHistoryHub({ onSelect }) {

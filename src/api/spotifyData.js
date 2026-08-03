@@ -204,6 +204,22 @@ export function getTopArtists(timeRange = 'medium_term', limit = 20) {
   return spotifyFetch('/me/top/artists', { params: { time_range: timeRange, limit } })
 }
 
+// Best-match artist search by name, used to resolve a streaming-history
+// artist name (which has no Spotify id attached) to a real artist id. Spotify
+// removed the batch "Get Several Artists" endpoint, so there is no way to
+// look up many artists in one request — this and getArtist below are
+// necessarily called one artist at a time.
+export async function searchArtistByName(name) {
+  const result = await spotifyFetch('/search', {
+    params: { q: name, type: 'artist', limit: 1 },
+  })
+  return result?.artists?.items?.[0] ?? null
+}
+
+export function getArtist(artistId) {
+  return spotifyFetch(`/artists/${artistId}`)
+}
+
 // Paginates through /me/tracks up to maxTracks (Spotify caps page size at 50).
 export async function getSavedTracks(maxTracks = 200) {
   const items = []

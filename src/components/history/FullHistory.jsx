@@ -13,6 +13,7 @@ import ObsessionAndLoyalty from './loyalty/ObsessionAndLoyalty.jsx'
 import BigPicture from './bigpicture/BigPicture.jsx'
 import ListeningBehavior from './behavior/ListeningBehavior.jsx'
 import MoreInsights from './moreinsights/MoreInsights.jsx'
+import GenreAnalysis from './genre/GenreAnalysis.jsx'
 import FullHistoryHub from './FullHistoryHub.jsx'
 
 const SECTION_LABELS = {
@@ -22,6 +23,7 @@ const SECTION_LABELS = {
   bigpicture: 'Bigger Picture',
   behavior: 'Listening Behavior',
   moreinsights: 'More Insights',
+  genre: 'Genre Analysis',
 }
 
 function Overview({ entries }) {
@@ -138,6 +140,7 @@ export default function FullHistory() {
             {activeSubSection === 'bigpicture' && <BigPicture entries={entries} />}
             {activeSubSection === 'behavior' && <ListeningBehavior entries={entries} />}
             {activeSubSection === 'moreinsights' && <MoreInsights entries={entries} />}
+            {activeSubSection === 'genre' && <GenreAnalysis entries={entries} />}
           </div>
         </>
       )}
