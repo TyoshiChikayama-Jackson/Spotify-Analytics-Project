@@ -6,10 +6,11 @@ import { getValidAccessToken } from '../auth/spotifyAuth.js'
 // off the page instead of requiring console paste (which has been blocked
 // in this environment). Safe to delete once the underlying issue is found.
 const CHECKS = [
-  { label: 'GET /me (baseline, known working)', path: '/me' },
-  { label: 'GET /me/player (known working)', path: '/me/player' },
   { label: 'GET /me/tracks?limit=1', path: '/me/tracks?limit=1' },
-  { label: 'GET /me/tracks/contains?ids=...', path: '/me/tracks/contains?ids=0OluoQzCZ4sOYu7rlqilBw' },
+  {
+    label: 'GET /me/tracks/contains?ids=0OluoQzCZ4sOYu7rlqilBw (hardcoded guess ID)',
+    path: '/me/tracks/contains?ids=0OluoQzCZ4sOYu7rlqilBw',
+  },
 ]
 
 export default function LibraryDiagnostic() {
@@ -20,17 +21,51 @@ export default function LibraryDiagnostic() {
     setRunning(true)
     const token = await getValidAccessToken()
     const output = []
+
+    const fullBodies = {}
     for (const check of CHECKS) {
       try {
         const response = await fetch(`https://api.spotify.com/v1${check.path}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         const text = await response.text()
+        fullBodies[check.path] = text
         output.push({ ...check, status: response.status, body: text.slice(0, 300) })
       } catch (err) {
         output.push({ ...check, status: 'network error', body: err.message })
       }
     }
+
+    // Pull a real, verifiably-in-library track ID from the /me/tracks
+    // response (untruncated) and re-test /contains against it — the
+    // earlier 403 used a hardcoded guessed ID that may not actually exist.
+    try {
+      const parsed = JSON.parse(fullBodies['/me/tracks?limit=1'])
+      const realId = parsed?.items?.[0]?.track?.id
+      if (realId) {
+        const response = await fetch(
+          `https://api.spotify.com/v1/me/tracks/contains?ids=${realId}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        )
+        const text = await response.text()
+        output.push({
+          label: `GET /me/tracks/contains?ids=${realId} (REAL id from your library)`,
+          path: `/me/tracks/contains?ids=${realId}`,
+          status: response.status,
+          body: text.slice(0, 300),
+        })
+      } else {
+        output.push({
+          label: 'Real-ID retest',
+          path: '',
+          status: 'skipped',
+          body: 'Could not parse a track id out of the /me/tracks response (see body above/truncated).',
+        })
+      }
+    } catch (err) {
+      output.push({ label: 'Real-ID retest', path: '', status: 'error', body: err.message })
+    }
+
     setResults(output)
     setRunning(false)
   }
