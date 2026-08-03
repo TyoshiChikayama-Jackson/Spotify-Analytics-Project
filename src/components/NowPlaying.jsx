@@ -12,7 +12,6 @@ import { useDominantColor } from '../hooks/useDominantColor.js'
 import { SectionLoading, SectionError, RefreshButton } from './SectionState.jsx'
 import PlaybackControls from './PlaybackControls.jsx'
 import SeekBar from './SeekBar.jsx'
-import SaveTrackButton from './SaveTrackButton.jsx'
 
 function MiniTrackStrip({ title, tracks, onChanged }) {
   const [pendingUri, setPendingUri] = useState(null)
@@ -211,15 +210,10 @@ export default function NowPlaying() {
             </div>
 
             <div className="now-playing-info">
-              <div className="now-playing-title-row">
-                <div style={{ minWidth: 0 }}>
-                  <p className="now-playing-track">{data.item.name}</p>
-                  <p className="now-playing-artist">
-                    {data.item.artists.map((a) => a.name).join(', ')}
-                  </p>
-                </div>
-                <SaveTrackButton trackId={currentTrackId} />
-              </div>
+              <p className="now-playing-track">{data.item.name}</p>
+              <p className="now-playing-artist">
+                {data.item.artists.map((a) => a.name).join(', ')}
+              </p>
               <p className="muted small now-playing-album">{data.item.album.name}</p>
 
               <SeekBar
