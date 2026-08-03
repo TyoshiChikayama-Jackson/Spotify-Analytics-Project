@@ -12,7 +12,13 @@ import {
 import { detectSessions } from './habitsStats.js'
 import { msToHours } from './historyStats.js'
 
-const CONCURRENCY = 4
+// Kept low and serialized-ish on purpose — Spotify's Search/Get-Artist rate
+// limit is a rolling window shared across all concurrent requests, so firing
+// many in parallel exhausts it almost immediately (every request then 429s,
+// and spotifyFetch's Retry-After backoff makes concurrent retries pile up
+// rather than help). A small concurrency clears a 7,000+ artist backlog
+// slowly but reliably instead of tripping the limit within the first second.
+const CONCURRENCY = 2
 const BATCH_PERSIST_SIZE = 25
 
 // Runs `worker` over `items` with a small fixed concurrency, persisting
@@ -59,7 +65,6 @@ export async function resolveGenresForHistory(entries, { onProgress } = {}) {
   let idsDone = 0
   onProgress?.({ stage: 'resolving-artists', completed: 0, total: namesToResolve.length })
 
-  let debugLogged = 0
   const idResults = await runPool(
     namesToResolve,
     async (name) => {
@@ -67,15 +72,7 @@ export async function resolveGenresForHistory(entries, { onProgress } = {}) {
       try {
         const match = await searchArtistByName(name)
         artistId = match?.id ?? null
-        if (debugLogged < 5) {
-          debugLogged += 1
-          console.log('[genre-debug] search result', { name, match, artistId })
-        }
-      } catch (err) {
-        if (debugLogged < 5) {
-          debugLogged += 1
-          console.error('[genre-debug] search FAILED', { name, status: err.status, message: err.message })
-        }
+      } catch {
         artistId = null
       }
       return [name, artistId]

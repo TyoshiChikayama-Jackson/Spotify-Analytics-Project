@@ -2,7 +2,16 @@ import { getValidAccessToken, refreshAccessToken } from '../auth/spotifyAuth.js'
 
 const API_BASE = 'https://api.spotify.com/v1'
 
-async function spotifyFetch(path, { params, method = 'GET', body, retrying = false } = {}) {
+const MAX_RATE_LIMIT_RETRIES = 5
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function spotifyFetch(
+  path,
+  { params, method = 'GET', body, retrying = false, rateLimitRetries = 0 } = {},
+) {
   const token = await getValidAccessToken()
   const url = new URL(`${API_BASE}${path}`)
   if (params) {
@@ -24,15 +33,21 @@ async function spotifyFetch(path, { params, method = 'GET', body, retrying = fal
     body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 
-  if (path === '/search') {
-    console.log('[genre-debug] fetch', { url: url.toString(), status: response.status })
-  }
-
   if (response.status === 204) return null
 
   if (response.status === 401 && !retrying) {
     await refreshAccessToken()
     return spotifyFetch(path, { params, method, body, retrying: true })
+  }
+
+  // Spotify's rate limit is a rolling window, not a per-request thing — firing
+  // more requests immediately after a 429 only extends the block. Respect the
+  // Retry-After header (seconds) and wait it out, bounded so a persistently
+  // misbehaving caller can't retry forever.
+  if (response.status === 429 && rateLimitRetries < MAX_RATE_LIMIT_RETRIES) {
+    const retryAfterSeconds = Number(response.headers.get('Retry-After')) || 1
+    await sleep(retryAfterSeconds * 1000)
+    return spotifyFetch(path, { params, method, body, retrying, rateLimitRetries: rateLimitRetries + 1 })
   }
 
   if (!response.ok) {
