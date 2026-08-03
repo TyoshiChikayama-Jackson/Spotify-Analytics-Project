@@ -44,10 +44,18 @@ async function spotifyFetch(
   // more requests immediately after a 429 only extends the block. Respect the
   // Retry-After header (seconds) and wait it out, bounded so a persistently
   // misbehaving caller can't retry forever.
-  if (response.status === 429 && rateLimitRetries < MAX_RATE_LIMIT_RETRIES) {
+  if (response.status === 429) {
     const retryAfterSeconds = Number(response.headers.get('Retry-After')) || 1
-    await sleep(retryAfterSeconds * 1000)
-    return spotifyFetch(path, { params, method, body, retrying, rateLimitRetries: rateLimitRetries + 1 })
+    console.log('[genre-debug] 429', {
+      path,
+      retryAfterSeconds,
+      rateLimitRetries,
+      willRetry: rateLimitRetries < MAX_RATE_LIMIT_RETRIES,
+    })
+    if (rateLimitRetries < MAX_RATE_LIMIT_RETRIES) {
+      await sleep(retryAfterSeconds * 1000)
+      return spotifyFetch(path, { params, method, body, retrying, rateLimitRetries: rateLimitRetries + 1 })
+    }
   }
 
   if (!response.ok) {
